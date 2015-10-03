@@ -1,7 +1,7 @@
 #include "ECSE/Engine.h"
 #include "ECSE/Common.h"
 #include "ECSE/Logging.h"
-#include "ConwayTestState.h"
+#include "OrganismState.h"
 
 //! Contains all CellGame-specific code.
 namespace CellGame {}
@@ -35,7 +35,7 @@ int main(int argv, char* argc[])
         // Run the game
         ECSE::Engine engine(sf::Vector2i(400, 300), 2.f, "Cell Game");
 
-        engine.pushState<ConwayTestState>();
+        engine.pushState<OrganismState>();
 
         engine.run();
     }
