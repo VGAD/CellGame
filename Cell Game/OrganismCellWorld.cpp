@@ -1,5 +1,6 @@
 #include "OrganismCellWorld.h"
 #include "ECSE/Logging.h"
+#include "ECSE/Common.h"
 
 namespace CellGame
 {
@@ -67,13 +68,14 @@ void OrganismCellWorld::step()
         posFromIndex(a, p1);
         posFromIndex(b, p2);
 
-        int dx1 = posCursor.x - p1.x,
-            dy1 = posCursor.y - p1.y,
-            dx2 = posCursor.x - p2.x,
-            dy2 = posCursor.y - p2.y;
+        float dx1 = ECSE::wrapDifference(static_cast<float>(posCursor.x), static_cast<float>(p1.x), static_cast<float>(width)),
+              dy1 = ECSE::wrapDifference(static_cast<float>(posCursor.y), static_cast<float>(p1.y), static_cast<float>(height)),
+              dx2 = ECSE::wrapDifference(static_cast<float>(posCursor.x), static_cast<float>(p2.x), static_cast<float>(width)),
+              dy2 = ECSE::wrapDifference(static_cast<float>(posCursor.y), static_cast<float>(p2.y), static_cast<float>(height));
 
         return (dx1*dx1 + dy1*dy1) < (dx2*dx2 + dy2*dy2);
     });
+    std::random_shuffle(born.begin() + static_cast<size_t>(born.size() * followPercent), born.end());
 
     auto bornIter = born.begin();
     auto diedIter = died.begin();

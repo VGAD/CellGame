@@ -10,11 +10,13 @@ namespace CellGame
 class OrganismCellWorld : public CellWorld<OrganismCell>
 {
 public:
+    const float followPercent = 0.1f;
+
     //! Construct the cell world.
     OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
         : CellWorld<OrganismCell>(width, height), engine(_engine)
     {}
-
+    
     virtual void init() override;
 
     //! Perform a single simulation step.
