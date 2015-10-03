@@ -13,9 +13,7 @@ public:
     const float followPercent = 0.1f;
 
     //! Construct the cell world.
-    OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
-        : CellWorld<OrganismCell>(width, height), engine(_engine)
-    {}
+    OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height);
     
     virtual void init() override;
 
@@ -30,6 +28,9 @@ private:
 
     //! Vectors representing current cursor positions
     sf::Vector2i posCursor, negCursor;
+
+    //! Graphics for cursors
+    const sf::Texture& posCursorTex, negCursorTex;
 };
 
 }
