@@ -8,23 +8,15 @@ void OrganismCellWorld::init()
 {
     CellWorld<OrganismCell>::init();
 
-    sf::IntRect bounds
-    {
-        static_cast<int>(width * 0.3),
-        static_cast<int>(height * 0.3),
-        static_cast<int>(width * 0.4),
-        static_cast<int>(height * 0.4)
-    };
-
     sf::Vector2i center
     {
         static_cast<int>(width / 2),
         static_cast<int>(height / 2)
     };
 
-    for (int x = bounds.left; x < bounds.left + bounds.width; ++x)
+    for (unsigned int x = 0; x < width; ++x)
     {
-        for (int y = bounds.top; y < bounds.top + bounds.height; ++y)
+        for (unsigned int y = 0; y < height; ++y)
         {
             auto cell = &cells[indexFromPos(x, y)];
 
@@ -54,8 +46,11 @@ void OrganismCellWorld::step()
             died.push_back(i);
         }
     }
-
+    
+    // Shuffle the list of cells that died
     std::random_shuffle(died.begin(), died.end());
+
+    // Sort the list of cells that will be born to move towards an objective
     std::sort(born.begin(), born.end(), 
         [&](size_t a, size_t b) -> bool
     {
@@ -72,9 +67,7 @@ void OrganismCellWorld::step()
             dy2 = dest.y - p2.y;
 
         return (dx1*dx1 + dy1*dy1) < (dx2*dx2 + dy2*dy2);
-    }
-        );
-
+    });
 
     auto bornIter = born.begin();
     auto diedIter = died.begin();

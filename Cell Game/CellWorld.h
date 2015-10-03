@@ -78,9 +78,9 @@ public:
     * \param pos Position to place result in.
     * \return true if the index was valid. If false, the position is not changed.
     */
-    inline bool posFromIndex(int index, sf::Vector2i& pos)
+    inline bool posFromIndex(size_t index, sf::Vector2i& pos)
     {
-        if (index < 0 || index > width * height) return false;
+        if (index > width * height) return false;
 
         pos.x = index % width;
         pos.y = index / width;
