@@ -14,6 +14,7 @@ public:
     explicit ConwayTestState(ECSE::Engine* engine)
         : ECSE::State(engine), cellWorld(400, 300)
     {
+        cellWorld.looping = true;
     }
 
     virtual void update(sf::Time deltaTime) override;

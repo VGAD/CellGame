@@ -18,6 +18,8 @@ class CellWorld
     static_assert(std::is_base_of<AutomataCell, CellType>::value, "Cell type must be derived from AutomataCell");
 
 public:
+    bool looping;   //!< If true, cells in this world loop around the edges.
+
     //! Construct the cell world.
     CellWorld(unsigned width, unsigned height);
 
@@ -150,11 +152,19 @@ NeighborArray CellWorld<CellType>::getNeighbors(unsigned index)
         auto neighborPos = pos;
         neighborPos += offsets[i];
 
-        if (neighborPos.x < 0 || neighborPos.x >= static_cast<int>(width) ||
-            neighborPos.y < 0 || neighborPos.y >= static_cast<int>(height))
+        if (looping)
         {
-            result[i] = nullptr;
-            continue;
+            neighborPos.x = (neighborPos.x + width) % width;
+            neighborPos.y = (neighborPos.y + height) % height;
+        }
+        else
+        {
+            if (neighborPos.x < 0 || neighborPos.x >= static_cast<int>(width) ||
+                neighborPos.y < 0 || neighborPos.y >= static_cast<int>(height))
+            {
+                result[i] = nullptr;
+                continue;
+            }
         }
 
         unsigned neighborIndex = neighborPos.x + neighborPos.y * width;
