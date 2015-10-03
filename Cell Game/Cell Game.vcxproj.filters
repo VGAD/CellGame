@@ -15,29 +15,53 @@
     <Filter Include="Source Files\Automata">
       <UniqueIdentifier>{de2ed8cc-fb9c-4de9-9f98-966e1c715644}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Automata\Cell">
+      <UniqueIdentifier>{0f3c8581-d03f-4613-a4d1-8e013bc5f11e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Automata\World">
+      <UniqueIdentifier>{330b9a44-45f5-4850-9134-974cd87adf3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConwayCell.cpp">
-      <Filter>Source Files\Automata</Filter>
-    </ClCompile>
     <ClCompile Include="ConwayTestState.cpp">
       <Filter>Source Files\State</Filter>
     </ClCompile>
+    <ClCompile Include="ConwayCell.cpp">
+      <Filter>Source Files\Automata\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="OrganismCell.cpp">
+      <Filter>Source Files\Automata\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="OrganismState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="OrganismCellWorld.cpp">
+      <Filter>Source Files\Automata\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AutomataCell.h">
-      <Filter>Source Files\Automata</Filter>
+    <ClInclude Include="ConwayTestState.h">
+      <Filter>Source Files\State</Filter>
     </ClInclude>
-    <ClInclude Include="CellWorld.h">
-      <Filter>Source Files\Automata</Filter>
+    <ClInclude Include="AutomataCell.h">
+      <Filter>Source Files\Automata\Cell</Filter>
     </ClInclude>
     <ClInclude Include="ConwayCell.h">
-      <Filter>Source Files\Automata</Filter>
+      <Filter>Source Files\Automata\Cell</Filter>
     </ClInclude>
-    <ClInclude Include="ConwayTestState.h">
+    <ClInclude Include="CellWorld.h">
+      <Filter>Source Files\Automata\World</Filter>
+    </ClInclude>
+    <ClInclude Include="OrganismCell.h">
+      <Filter>Source Files\Automata\Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="OrganismCellWorld.h">
+      <Filter>Source Files\Automata\World</Filter>
+    </ClInclude>
+    <ClInclude Include="OrganismState.h">
       <Filter>Source Files\State</Filter>
     </ClInclude>
   </ItemGroup>

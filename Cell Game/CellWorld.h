@@ -24,13 +24,13 @@ public:
     CellWorld(unsigned width, unsigned height);
 
     //! Initialize/reset the world.
-    void init();
+    virtual void init();
 
     //! Perform a single simulation step.
-    void step();
+    virtual void step();
 
     //! Update the texture if necessary.
-    void updateTexture();
+    virtual void updateTexture();
 
     //! Get the texture for rendering.
     /*!
@@ -50,7 +50,45 @@ public:
     */
     unsigned getHeight() const { return height; }
 
-private:
+    //! Get a cell's index from its position.
+    /*!
+    * \return The index or -1 if invalid position.
+    */
+    inline unsigned indexFromPos(int x, int y)
+    {
+        if (looping)
+        {
+            x = (x + width) % width;
+            y = (y + height) % height;
+        }
+        else
+        {
+            if (x < 0 || x >= static_cast<int>(width) || y < 0 || y >= static_cast<int>(height))
+            {
+                return -1;
+            }
+        }
+
+        return x + y * width;
+    }
+
+    //! Get a cell's position from its index.
+    /*!
+    * \param index The cell's index.
+    * \param pos Position to place result in.
+    * \return true if the index was valid. If false, the position is not changed.
+    */
+    inline bool posFromIndex(int index, sf::Vector2i& pos)
+    {
+        if (index < 0 || index > width * height) return false;
+
+        pos.x = index % width;
+        pos.y = index / width;
+
+        return true;
+    }
+
+protected:
     //! Get the neighbors to a cell index.
     /*!
     * \param index The cell index.
@@ -152,22 +190,14 @@ NeighborArray CellWorld<CellType>::getNeighbors(unsigned index)
         auto neighborPos = pos;
         neighborPos += offsets[i];
 
-        if (looping)
+        unsigned neighborIndex = indexFromPos(neighborPos.x, neighborPos.y);
+
+        if (neighborIndex == -1)
         {
-            neighborPos.x = (neighborPos.x + width) % width;
-            neighborPos.y = (neighborPos.y + height) % height;
-        }
-        else
-        {
-            if (neighborPos.x < 0 || neighborPos.x >= static_cast<int>(width) ||
-                neighborPos.y < 0 || neighborPos.y >= static_cast<int>(height))
-            {
-                result[i] = nullptr;
-                continue;
-            }
+            result[i] = nullptr;
+            continue;
         }
 
-        unsigned neighborIndex = neighborPos.x + neighborPos.y * width;
         result[i] = &cells[neighborIndex];
     }
 
