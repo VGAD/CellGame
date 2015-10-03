@@ -1,3 +1,4 @@
+#include "ECSE/Engine.h"
 #include "CellWorld.h"
 #include "OrganismCell.h"
 
@@ -8,8 +9,8 @@ class OrganismCellWorld : public CellWorld<OrganismCell>
 {
 public:
     //! Construct the cell world.
-    OrganismCellWorld(unsigned width, unsigned height)
-        : CellWorld<OrganismCell>(width, height)
+    OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
+        : CellWorld<OrganismCell>(width, height), engine(_engine)
     {}
 
     virtual void init() override;
@@ -17,6 +18,12 @@ public:
     //! Perform a single simulation step.
     virtual void step() override;
 
+private:
+    //! Engine pointer to get access to input
+    ECSE::Engine* engine;   
+
+    //! Vectors representing current cursor positions
+    sf::Vector2i posCursor, negCursor;
 };
 
 }
