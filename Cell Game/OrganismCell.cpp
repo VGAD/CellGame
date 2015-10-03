@@ -26,7 +26,7 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
         if (organism->prevAlive) ++aliveNeighbors;
     }
 
-    bool randomDie = rand() % 100 > 80;
+    bool randomDie = (rand() % 100 > 90) && (aliveNeighbors < 6);
     nextAlive = aliveNeighbors > 2 && !randomDie;
 }
 
