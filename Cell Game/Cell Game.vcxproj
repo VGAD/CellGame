@@ -79,9 +79,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConwayCell.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutomataCell.h" />
+    <ClInclude Include="CellWorld.h" />
+    <ClInclude Include="ConwayCell.h" />
     <ClInclude Include="TestState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

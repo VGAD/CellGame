@@ -33,7 +33,7 @@ int main(int argv, char* argc[])
     try
     {
         // Run the game
-        ECSE::Engine engine(sf::Vector2i(800, 600), 1.f, "Cell Game");
+        ECSE::Engine engine(sf::Vector2i(400, 300), 2.f, "Cell Game");
 
         engine.pushState<TestState>();
 

@@ -12,15 +12,33 @@
     <Filter Include="Source Files\State">
       <UniqueIdentifier>{5857bb02-ae61-4b67-bb8a-52024781f7e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Automata">
+      <UniqueIdentifier>{de2ed8cc-fb9c-4de9-9f98-966e1c715644}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ConwayCell.cpp">
+      <Filter>Source Files\Automata</Filter>
+    </ClCompile>
+    <ClCompile Include="TestState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestState.h">
       <Filter>Source Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomataCell.h">
+      <Filter>Source Files\Automata</Filter>
+    </ClInclude>
+    <ClInclude Include="CellWorld.h">
+      <Filter>Source Files\Automata</Filter>
+    </ClInclude>
+    <ClInclude Include="ConwayCell.h">
+      <Filter>Source Files\Automata</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
