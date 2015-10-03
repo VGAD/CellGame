@@ -16,10 +16,8 @@ public:
     virtual sf::Color getColor() override;
 
     bool alive;     //!< Whether this cell is alive.
-    bool wasAlive;  //!< Whether this was alive last step.
-
-    bool canDie;    //!< Whether this cell can die this step.
-    bool canLive;   //!< Whether this cell can be made alive this step.
+    bool nextAlive; //!< Whether the cell could be alive next step.
+    bool prevAlive; //!< Whether this was alive last step.
 };
 
 }

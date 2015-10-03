@@ -10,7 +10,7 @@ void OrganismCell::init()
 
 void OrganismCell::update()
 {
-    wasAlive = alive;
+    prevAlive = alive;
 }
 
 void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
@@ -21,13 +21,12 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
     {
         if (neighbor == nullptr) continue;
 
-        auto* conway = static_cast<OrganismCell*>(neighbor);
+        auto* organism = static_cast<OrganismCell*>(neighbor);
 
-        if (conway->wasAlive) ++aliveNeighbors;
+        if (organism->prevAlive) ++aliveNeighbors;
     }
 
-    canDie = wasAlive;
-    canLive = aliveNeighbors >= 1 && !wasAlive;
+    nextAlive = aliveNeighbors == 3 || aliveNeighbors == 2 && alive;
 }
 
 sf::Color OrganismCell::getColor()
