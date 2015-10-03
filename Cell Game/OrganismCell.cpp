@@ -26,7 +26,8 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
         if (conway->wasAlive) ++aliveNeighbors;
     }
 
-    canDie = aliveNeighbors == 3 || aliveNeighbors == 2 && alive;
+    canDie = wasAlive;
+    canLive = aliveNeighbors >= 1 && !wasAlive;
 }
 
 sf::Color OrganismCell::getColor()
