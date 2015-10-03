@@ -6,12 +6,12 @@
 
 namespace CellGame {
 
-//! Tests basic sprite rendering.
-class TestState : public ECSE::State
+//! Test world with Conway's Game of Life.
+class ConwayTestState : public ECSE::State
 {
 public:
     //! Construct the state.
-    explicit TestState(ECSE::Engine* engine)
+    explicit ConwayTestState(ECSE::Engine* engine)
         : ECSE::State(engine), cellWorld(400, 300)
     {
     }

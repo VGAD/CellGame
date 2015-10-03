@@ -81,13 +81,13 @@
   <ItemGroup>
     <ClCompile Include="ConwayCell.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TestState.cpp" />
+    <ClCompile Include="ConwayTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutomataCell.h" />
     <ClInclude Include="CellWorld.h" />
     <ClInclude Include="ConwayCell.h" />
-    <ClInclude Include="TestState.h" />
+    <ClInclude Include="ConwayTestState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,14 +23,11 @@
     <ClCompile Include="ConwayCell.cpp">
       <Filter>Source Files\Automata</Filter>
     </ClCompile>
-    <ClCompile Include="TestState.cpp">
+    <ClCompile Include="ConwayTestState.cpp">
       <Filter>Source Files\State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestState.h">
-      <Filter>Source Files\State</Filter>
-    </ClInclude>
     <ClInclude Include="AutomataCell.h">
       <Filter>Source Files\Automata</Filter>
     </ClInclude>
@@ -39,6 +36,9 @@
     </ClInclude>
     <ClInclude Include="ConwayCell.h">
       <Filter>Source Files\Automata</Filter>
+    </ClInclude>
+    <ClInclude Include="ConwayTestState.h">
+      <Filter>Source Files\State</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
