@@ -44,6 +44,7 @@ void OrganismCellWorld::step()
             died.push_back(&cell);
         }
     }
+    std::random_shuffle(born.begin(), born.end());
 
     auto bornIter = born.begin();
     auto diedIter = died.begin();
