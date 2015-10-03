@@ -8,6 +8,10 @@ void OrganismCellWorld::init()
 {
     CellWorld<OrganismCell>::init();
 
+    // Set up input
+    engine->inputManager.bindInput(0, 0, sf::Keyboard::A, sf::Keyboard::D);
+    engine->inputManager.bindInput(1, 0, sf::Keyboard::W, sf::Keyboard::S);
+
     sf::Vector2i center
     {
         static_cast<int>(width / 2),
@@ -26,6 +30,11 @@ void OrganismCellWorld::init()
             cell->alive = sqrt(dx * dx + dy * dy) < width * 0.1;
         }
     }
+
+    posCursor.x = center.x;
+    posCursor.y = center.y;
+    negCursor.x = center.x;
+    negCursor.y = center.y;
 }
 
 void OrganismCellWorld::step()
@@ -58,13 +67,10 @@ void OrganismCellWorld::step()
         posFromIndex(a, p1);
         posFromIndex(b, p2);
 
-        // TEMPORARY DESTINATION
-        sf::Vector2i dest(0, 0);
-
-        int dx1 = dest.x - p1.x,
-            dy1 = dest.y - p1.y,
-            dx2 = dest.x - p2.x,
-            dy2 = dest.y - p2.y;
+        int dx1 = posCursor.x - p1.x,
+            dy1 = posCursor.y - p1.y,
+            dx2 = posCursor.x - p2.x,
+            dy2 = posCursor.y - p2.y;
 
         return (dx1*dx1 + dy1*dy1) < (dx2*dx2 + dy2*dy2);
     });
@@ -80,6 +86,23 @@ void OrganismCellWorld::step()
         ++bornIter;
         ++diedIter;
     }
+
+    posCursor.x += engine->inputManager.getIntValue(0);
+    posCursor.y += engine->inputManager.getIntValue(1);
+}
+
+void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
+{
+    CellWorld<OrganismCell>::render(alpha, renderTarget);
+
+    sf::CircleShape circle(2);
+    circle.setFillColor(sf::Color(150, 50, 250));
+
+    sf::Vector2f pos(posCursor);
+
+    circle.setPosition(pos);
+
+    renderTarget.draw(circle);
 }
 
 }

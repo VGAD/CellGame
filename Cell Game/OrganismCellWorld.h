@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ECSE/Engine.h"
 #include "CellWorld.h"
 #include "OrganismCell.h"
@@ -17,6 +19,8 @@ public:
 
     //! Perform a single simulation step.
     virtual void step() override;
+
+    virtual void render(float alpha, sf::RenderTarget& renderTarget);
 
 private:
     //! Engine pointer to get access to input
