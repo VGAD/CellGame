@@ -75,7 +75,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ECSE_DIR)\Release;C:\Program Files %28x86%29\SFML\lib;C:\boost_1_57_0\stage\lib;$(SolutionDir)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ECSE.lib;winmm.lib;openal32.lib;sndfile.lib;opengl32.lib;gdi32.lib;freetype.lib;glew.lib;jpeg.lib;sfml-graphics-s.lib;sfml-audio-s.lib;sfml-window-s.lib;sfml-system-s.lib;sfml-main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
