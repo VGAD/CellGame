@@ -40,29 +40,49 @@ void OrganismCellWorld::step()
 {
     CellWorld<OrganismCell>::step();
 
-    std::vector<OrganismCell*> born;
-    std::vector<OrganismCell*> died;
+    std::vector<size_t> born;
+    std::vector<size_t> died;
 
-    for (auto& cell : cells)
+    for (size_t i = 0; i < cells.size(); ++i)
     {
-        if (cell.nextAlive && !cell.alive)
+        if (cells[i].nextAlive && !cells[i].alive)
         {
-            born.push_back(&cell);
+            born.push_back(i);
         }
-        else if (!cell.nextAlive && cell.alive)
+        else if (!cells[i].nextAlive && cells[i].alive)
         {
-            died.push_back(&cell);
+            died.push_back(i);
         }
     }
-    std::random_shuffle(born.begin(), born.end());
+
+    std::random_shuffle(died.begin(), died.end());
+    std::sort(born.begin(), born.end(), 
+        [&](size_t a, size_t b) -> bool
+    {
+        sf::Vector2i p1, p2;
+        posFromIndex(a, p1);
+        posFromIndex(b, p2);
+
+        // TEMPORARY DESTINATION
+        sf::Vector2i dest(0, 0);
+
+        int dx1 = dest.x - p1.x,
+            dy1 = dest.y - p1.y,
+            dx2 = dest.x - p2.x,
+            dy2 = dest.y - p2.y;
+
+        return (dx1*dx1 + dy1*dy1) < (dx2*dx2 + dy2*dy2);
+    }
+        );
+
 
     auto bornIter = born.begin();
     auto diedIter = died.begin();
 
     while (bornIter != born.end() && diedIter != died.end())
     {
-        (*bornIter)->alive = true;
-        (*diedIter)->alive = false;
+        cells[*bornIter].alive = true;
+        cells[*diedIter].alive = false;
 
         ++bornIter;
         ++diedIter;
