@@ -13,6 +13,10 @@ public:
     {}
 
     virtual void init() override;
+
+    //! Perform a single simulation step.
+    virtual void step() override;
+
 };
 
 }

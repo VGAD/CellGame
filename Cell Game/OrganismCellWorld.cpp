@@ -25,4 +25,14 @@ void OrganismCellWorld::init()
     }
 }
 
+void OrganismCellWorld::step()
+
+{
+    CellWorld<OrganismCell>::step();
+
+    for (auto& cell : cells) {
+        cell.alive = cell.canDie;
+    }
+}
+
 }

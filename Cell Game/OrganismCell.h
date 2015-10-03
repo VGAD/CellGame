@@ -17,6 +17,8 @@ public:
 
     bool alive;     //!< Whether this cell is alive.
     bool wasAlive;  //!< Whether this was alive last step.
+
+    bool canDie;    //!< Whether this cell can die.
 };
 
 }
