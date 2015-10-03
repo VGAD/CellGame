@@ -16,12 +16,22 @@ void OrganismCellWorld::init()
         static_cast<int>(height * 0.4)
     };
 
+    sf::Vector2i center
+    {
+        static_cast<int>(width / 2),
+        static_cast<int>(height / 2)
+    };
+
     for (int x = bounds.left; x < bounds.left + bounds.width; ++x)
     {
         for (int y = bounds.top; y < bounds.top + bounds.height; ++y)
         {
             auto cell = &cells[indexFromPos(x, y)];
-            cell->alive = (rand() % 10) > 2;
+
+            int dx = x - center.x;
+            int dy = y - center.y;
+
+            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.1;
         }
     }
 }
