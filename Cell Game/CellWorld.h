@@ -32,6 +32,9 @@ public:
     //! Update the texture if necessary.
     virtual void updateTexture();
 
+    //! Render to a target
+    virtual void render(float alpha, sf::RenderTarget& renderTarget);
+
     //! Get the texture for rendering.
     /*!
     * \return The render texture.
@@ -176,6 +179,13 @@ void CellWorld<CellType>::updateTexture()
     texture.update(&pixels[0]);
 
     toUpdateTexture = false;
+}
+
+template <typename CellType>
+void CellWorld<CellType>::render(float alpha, sf::RenderTarget& renderTarget)
+{
+    updateTexture();
+    renderTarget.draw(sf::Sprite(getTexture()));
 }
 
 template <typename CellType>

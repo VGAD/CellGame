@@ -22,8 +22,7 @@ void OrganismState::advance()
 
 void OrganismState::render(float alpha, sf::RenderTarget& renderTarget)
 {
-    cellWorld.updateTexture();
-    renderTarget.draw(sf::Sprite(cellWorld.getTexture()));
+    cellWorld.render(alpha, renderTarget);
 }
 
 }
