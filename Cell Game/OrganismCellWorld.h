@@ -64,7 +64,7 @@ public:
 
 private:
     //! Up to this many dead cells will be removed with no replacement each frame.
-    const float decay = 0.8f;
+    const float decay = 1.2f;
 
     //! Add this many cells per tick that food is feeding the blob
     const int feed = 7;

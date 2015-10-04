@@ -290,8 +290,8 @@ void OrganismCellWorld::updateDeathChances()
     }
 
     const int cursorEffectSize = 10;
-    const float strength = 10.f;
-    const float maxChance = .40f; // This should be < 1-(cell die chance)
+    const float strength = 20.f;
+    const float maxChance = .30f; // This should be < 1-(cell die chance)
 
     // Increase likelihood of cells being killed near cursor
     for (int x = static_cast<int>(negCursor.x) - cursorEffectSize; x < static_cast<int>(negCursor.x) + cursorEffectSize; ++x)
@@ -305,7 +305,7 @@ void OrganismCellWorld::updateDeathChances()
 
             if (dist == 0.f) cells[index].deathChance = maxChance;
             else  {
-                cells[index].deathChance = ECSE::clamp(0.f, maxChance, strength / (dist * dist));
+                cells[index].deathChance = ECSE::clamp(0.f, maxChance, strength / (dist * dist * dist));
             }
         }
     }
@@ -406,7 +406,7 @@ void OrganismCellWorld::redistributeCells()
         else
         {
             // Kill cells randomly
-            unsigned killRandom = rand() % 6;
+            unsigned killRandom = rand() % 8;
             for (unsigned i = 0; i < killRandom && diedIter != orgDied.end(); ++i)
             {
                 cells[*diedIter].alive = false;
