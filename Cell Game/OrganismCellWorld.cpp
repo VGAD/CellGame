@@ -89,8 +89,16 @@ void OrganismCellWorld::step()
         ++diedIter;
     }
 
-    posCursor.x += engine->inputManager.getIntValue(0);
-    posCursor.y += engine->inputManager.getIntValue(1);
+    int dx = engine->inputManager.getIntValue(0),
+        dy = engine->inputManager.getIntValue(1);
+
+    int index = indexFromPos(posCursor.x + dx * 3, posCursor.y + dy * 3);
+
+    if (cells[index].alive) {
+        posCursor.x += dx;
+        posCursor.y += dy;
+    }
+    
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
