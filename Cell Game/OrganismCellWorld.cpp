@@ -166,6 +166,8 @@ void OrganismCellWorld::updateDeathChances()
     }
 
     const int cursorEffectSize = 30;
+    const float strength = 100.f;
+    const float maxChance = .40f; // This should be < 1-(cell die chance)
 
     // Increase likelihood of cells being born near cursor
     for (int x = static_cast<int>(negCursor.x) - cursorEffectSize; x < static_cast<int>(negCursor.x) + cursorEffectSize; ++x)
@@ -177,9 +179,9 @@ void OrganismCellWorld::updateDeathChances()
                 dy1 = ECSE::wrapDifference(negCursor.y, static_cast<float>(y), static_cast<float>(height));
             float dist = sqrt(dx1 * dx1 + dy1 * dy1);
 
-            if (dist == 0.f) cells[index].deathChance = .35f;
+            if (dist == 0.f) cells[index].deathChance = maxChance;
             else  {
-                cells[index].deathChance = ECSE::clamp(0.f, .35f, 100.f / (dist * dist));
+                cells[index].deathChance = ECSE::clamp(0.f, maxChance, strength / (dist * dist));
             }
         }
     }
