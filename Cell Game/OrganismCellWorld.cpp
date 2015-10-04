@@ -104,7 +104,9 @@ void OrganismCellWorld::step()
         posCursor.x += dx;
         posCursor.y += dy;
     }
-    
+
+    posCursor.x = (posCursor.x + width) % width;
+    posCursor.y = (posCursor.y + height) % height;
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
