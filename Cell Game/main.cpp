@@ -47,6 +47,7 @@ int main(int argv, char* argc[])
         engine.inputManager.bindInput(4, 0, sf::Keyboard::SemiColon, sf::Keyboard::P); // Shrink/Grow
         engine.inputManager.bindInput(5, 0, sf::Keyboard::BackSlash); // Food
         engine.inputManager.bindInput(6, 0, sf::Keyboard::RBracket); // Vortex
+        engine.inputManager.bindInput(7, 0, sf::Keyboard::LBracket); // test toggle
 
         engine.pushState<OrganismState>();
 
