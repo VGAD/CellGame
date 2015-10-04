@@ -96,6 +96,12 @@ void OrganismCellWorld::step()
             LOG(TRACE) << "Adding vortex "; // << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
         }
     }
+    if (engine->inputManager.getIntDelta(7))
+    {
+        modifiers[DIE_NEIGH_IND] = DIE_NEIGH_DEF + (rand() % 3 - 1);
+        modifiers[ALIVE_NEIGH_IND] = ALIVE_NEIGH_DEF + (rand() % 3 - 1);
+        LOG(TRACE) << modifiers[DIE_NEIGH_IND] << " " << modifiers[ALIVE_NEIGH_IND];
+    }
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
