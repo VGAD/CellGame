@@ -22,6 +22,15 @@ public:
 
     virtual void render(float alpha, sf::RenderTarget& renderTarget);
 
+    //! Move the cursor positions.
+    virtual void moveCursor();
+
+    //! Update chance of cells being born on organism edges.
+    virtual void updateBirthChances();
+
+    //! Redistribute dead and born cells.
+    virtual void redistributeCells();
+
 private:
     //! Engine pointer to get access to input
     ECSE::Engine* engine;   

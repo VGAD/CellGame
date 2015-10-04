@@ -53,61 +53,37 @@ void OrganismCellWorld::init()
 
 void OrganismCellWorld::step()
 {
-    for (auto& cell : cells)
-    {
-        cell.birthChance = 0.f;
-    }
-
-    const int cursorEffectSize = 20;
-
-    // Increase likelihood of cells being born near cursor
-    for (int x = static_cast<int>(posCursor.x) - cursorEffectSize; x < static_cast<int>(posCursor.x) + cursorEffectSize; ++x)
-    {
-        for (int y = static_cast<int>(posCursor.y) - cursorEffectSize; y < static_cast<int>(posCursor.y) + cursorEffectSize; ++y)
-        {
-            size_t index = indexFromPos(x, y);
-            float dx1 = ECSE::wrapDifference(posCursor.x, static_cast<float>(x), static_cast<float>(width)),
-                  dy1 = ECSE::wrapDifference(posCursor.y, static_cast<float>(y), static_cast<float>(height));
-            float dist = sqrt(dx1 * dx1 + dy1 * dy1);
-            
-            if (dist == 0.f) cells[index].birthChance = 1.f;
-            else cells[index].birthChance = ECSE::clamp(0.f, 1.f, 20.f / (dist * dist));
-        }
-    }
+    updateBirthChances();
 
     CellWorld<OrganismCell>::step();
 
-    std::vector<size_t> born;
-    std::vector<size_t> died;
+    redistributeCells();
+    moveCursor();
+}
 
-    for (size_t i = 0; i < cells.size(); ++i)
-    {
-        if (cells[i].nextAlive && !cells[i].alive)
-        {
-            born.push_back(i);
-        }
-        else if (!cells[i].nextAlive && cells[i].alive)
-        {
-            died.push_back(i);
-        }
-    }
-    
-    // Shuffle the list of cells that died/were born
-    std::random_shuffle(died.begin(), died.end());
-    std::random_shuffle(born.begin(), born.end());
+void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
+{
+    CellWorld<OrganismCell>::render(alpha, renderTarget);
 
-    auto bornIter = born.begin();
-    auto diedIter = died.begin();
+    sf::Sprite posCursorSpr(posCursorTex);
+    sf::Sprite negCursorSpr(negCursorTex);
 
-    while (bornIter != born.end() && diedIter != died.end())
-    {
-        cells[*bornIter].alive = true;
-        cells[*diedIter].alive = false;
+    posCursorSpr.setOrigin(3.f, 3.f);
+    negCursorSpr.setOrigin(3.f, 3.f);
 
-        ++bornIter;
-        ++diedIter;
-    }
+    posCursorSpr.setPosition(
+        floor(posCursor.x),
+        floor(posCursor.y));
+    negCursorSpr.setPosition(
+        floor(negCursor.x),
+        floor(negCursor.y));
 
+    renderTarget.draw(posCursorSpr);
+    renderTarget.draw(negCursorSpr);
+}
+
+void OrganismCellWorld::moveCursor()
+{
     // Get input
     float dxPos = engine->inputManager.getFloatValue(0),
         dyPos = engine->inputManager.getFloatValue(1),
@@ -141,31 +117,70 @@ void OrganismCellWorld::step()
         negCursor += movementNeg * 0.5f;
     }
 
+    // Mod to wrap
     posCursor.x = static_cast<float>(fmod(posCursor.x + width, width));
     posCursor.y = static_cast<float>(fmod(posCursor.y + height, height));
     negCursor.x = static_cast<float>(fmod(negCursor.x + width, width));
     negCursor.y = static_cast<float>(fmod(negCursor.y + height, height));
 }
 
-void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
+void OrganismCellWorld::updateBirthChances()
 {
-    CellWorld<OrganismCell>::render(alpha, renderTarget);
+    for (auto& cell : cells)
+    {
+        cell.birthChance = 0.f;
+    }
 
-    sf::Sprite posCursorSpr(posCursorTex);
-    sf::Sprite negCursorSpr(negCursorTex);
+    const int cursorEffectSize = 30;
 
-    posCursorSpr.setOrigin(3.f, 3.f);
-    negCursorSpr.setOrigin(3.f, 3.f);
-    
-    posCursorSpr.setPosition(
-        floor(posCursor.x),
-        floor(posCursor.y));
-    negCursorSpr.setPosition(
-        floor(negCursor.x),
-        floor(negCursor.y));
+    // Increase likelihood of cells being born near cursor
+    for (int x = static_cast<int>(posCursor.x) - cursorEffectSize; x < static_cast<int>(posCursor.x) + cursorEffectSize; ++x)
+    {
+        for (int y = static_cast<int>(posCursor.y) - cursorEffectSize; y < static_cast<int>(posCursor.y) + cursorEffectSize; ++y)
+        {
+            size_t index = indexFromPos(x, y);
+            float dx1 = ECSE::wrapDifference(posCursor.x, static_cast<float>(x), static_cast<float>(width)),
+                  dy1 = ECSE::wrapDifference(posCursor.y, static_cast<float>(y), static_cast<float>(height));
+            float dist = sqrt(dx1 * dx1 + dy1 * dy1);
+            
+            if (dist == 0.f) cells[index].birthChance = 1.f;
+            else cells[index].birthChance = ECSE::clamp(0.f, 1.f, 40.f / (dist * dist));
+        }
+    }
+}
 
-    renderTarget.draw(posCursorSpr);
-    renderTarget.draw(negCursorSpr);
+void OrganismCellWorld::redistributeCells()
+{
+    std::vector<size_t> born;
+    std::vector<size_t> died;
+
+    for (size_t i = 0; i < cells.size(); ++i)
+    {
+        if (cells[i].nextAlive && !cells[i].alive)
+        {
+            born.push_back(i);
+        }
+        else if (!cells[i].nextAlive && cells[i].alive)
+        {
+            died.push_back(i);
+        }
+    }
+
+    // Shuffle the list of cells that died/were born
+    std::random_shuffle(died.begin(), died.end());
+    std::random_shuffle(born.begin(), born.end());
+
+    auto bornIter = born.begin();
+    auto diedIter = died.begin();
+
+    while (bornIter != born.end() && diedIter != died.end())
+    {
+        cells[*bornIter].alive = true;
+        cells[*diedIter].alive = false;
+
+        ++bornIter;
+        ++diedIter;
+    }
 }
 
 }
