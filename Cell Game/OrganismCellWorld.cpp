@@ -53,7 +53,7 @@ void OrganismCellWorld::step()
     calculateFood();
     moveCursor();
 
-    if (engine->inputManager.getIntValue(5) && !engine->inputManager.getIntDelta(5) && food.size() < 2)
+    if (engine->inputManager.getIntDelta(5) == 1 && food.size() < 2)
     {
         food.push_back(FoodObject(rand() % width, rand() % height));
         LOG(TRACE) << "Adding food ";// << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
