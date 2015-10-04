@@ -411,7 +411,7 @@ void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
     ++floodId;
 
     std::vector<unsigned int> open;
-    std::set<unsigned int> closed;
+    std::vector<unsigned int> closed;
     open.push_back(startCell);
 
     unsigned int foundOrganism = 0;
@@ -420,7 +420,7 @@ void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
     {
         unsigned int index = open.back();
         open.pop_back();
-        closed.insert(index);
+        closed.push_back(index);
 
         auto& cell = cells[index];
         cell.lastFlood = floodId;
