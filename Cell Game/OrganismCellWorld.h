@@ -119,7 +119,7 @@ private:
 
     sf::Font scoreFont;
 
-    size_t aliveCount = 0;
+    size_t aliveCount = 100000;
 };
 
 }
