@@ -26,8 +26,10 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
         if (organism->prevAlive) ++aliveNeighbors;
     }
 
-    bool randomDie = (rand() % 100 > 65) && (aliveNeighbors < 6);
-    nextAlive = aliveNeighbors > 2 && !randomDie;
+    bool randomDie = (rand() % 100 < 60) && (aliveNeighbors < 6);
+    bool randomSpawn = (rand() % 100 < static_cast<int>(100 * birthChance)) && (aliveNeighbors > 3);
+
+    nextAlive = (aliveNeighbors > 2 && !randomDie) || randomSpawn;
 }
 
 sf::Color OrganismCell::getColor()

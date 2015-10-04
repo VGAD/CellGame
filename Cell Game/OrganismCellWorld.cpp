@@ -46,6 +46,28 @@ void OrganismCellWorld::init()
 
 void OrganismCellWorld::step()
 {
+    for (auto& cell : cells)
+    {
+        cell.birthChance = 0.f;
+    }
+
+    const int cursorEffectSize = 20;
+
+    // Increase likelihood of cells being born near cursor
+    for (int x = posCursor.x - cursorEffectSize; x < posCursor.x + cursorEffectSize; ++x)
+    {
+        for (int y = posCursor.y - cursorEffectSize; y < posCursor.y + cursorEffectSize; ++y)
+        {
+            size_t index = indexFromPos(x, y);
+            float dx1 = ECSE::wrapDifference(static_cast<float>(posCursor.x), static_cast<float>(x), static_cast<float>(width)),
+                  dy1 = ECSE::wrapDifference(static_cast<float>(posCursor.y), static_cast<float>(y), static_cast<float>(height));
+            float dist = sqrt(dx1 * dx1 + dy1 * dy1);
+            
+            if (dist == 0.f) cells[index].birthChance = 1.f;
+            else cells[index].birthChance = ECSE::clamp(0.f, 1.f, 20.f / (dist * dist));
+        }
+    }
+
     CellWorld<OrganismCell>::step();
 
     std::vector<size_t> born;
@@ -63,25 +85,9 @@ void OrganismCellWorld::step()
         }
     }
     
-    // Shuffle the list of cells that died
+    // Shuffle the list of cells that died/were born
     std::random_shuffle(died.begin(), died.end());
-
-    // Sort the list of cells that will be born to move towards an objective
-    std::sort(born.begin(), born.end(), 
-        [&](size_t a, size_t b) -> bool
-    {
-        sf::Vector2i p1, p2;
-        posFromIndex(a, p1);
-        posFromIndex(b, p2);
-
-        float dx1 = ECSE::wrapDifference(static_cast<float>(posCursor.x), static_cast<float>(p1.x), static_cast<float>(width)),
-              dy1 = ECSE::wrapDifference(static_cast<float>(posCursor.y), static_cast<float>(p1.y), static_cast<float>(height)),
-              dx2 = ECSE::wrapDifference(static_cast<float>(posCursor.x), static_cast<float>(p2.x), static_cast<float>(width)),
-              dy2 = ECSE::wrapDifference(static_cast<float>(posCursor.y), static_cast<float>(p2.y), static_cast<float>(height));
-
-        return (dx1*dx1 + dy1*dy1) < (dx2*dx2 + dy2*dy2);
-    });
-    std::random_shuffle(born.begin() + static_cast<size_t>(born.size() * followPercent), born.end());
+    std::random_shuffle(born.begin(), born.end());
 
     auto bornIter = born.begin();
     auto diedIter = died.begin();

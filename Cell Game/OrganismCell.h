@@ -15,9 +15,10 @@ public:
     virtual void advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors) override;
     virtual sf::Color getColor() override;
 
-    bool alive;     //!< Whether this cell is alive.
-    bool nextAlive; //!< Whether the cell could be alive next step.
-    bool prevAlive; //!< Whether this was alive last step.
+    float birthChance;      //!< Likelihood of a random birth on organism edge.
+    bool alive;             //!< Whether this cell is alive.
+    bool nextAlive;         //!< Whether the cell could be alive next step.
+    bool prevAlive;         //!< Whether this was alive last step.
 };
 
 }
