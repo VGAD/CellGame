@@ -8,7 +8,9 @@ namespace CellGame
 
 OrganismCellWorld::OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
     : CellWorld<OrganismCell>(width, height), engine(_engine),
-    posCursorTex(engine->textureManager.get("Player1.png")), negCursorTex(engine->textureManager.get("Player2.png"))
+    posCursorTex(engine->textureManager.get("Player1.png")), negCursorTex(engine->textureManager.get("Player2.png")),
+    foodHighTex(engine->textureManager.get("foodHigh.png")), foodLowTex(engine->textureManager.get("foodLow.png")),
+    vortexTex(engine->textureManager.get("vortex.png"))
 {
 }
 
@@ -51,11 +53,19 @@ void OrganismCellWorld::step()
     CellWorld<OrganismCell>::step();
 
     redistributeCells();
+    calculateFood();
+    calculateVortex();
     moveCursor();
 
-    if (engine->inputManager.getIntValue(5)) {
-
-
+    if (engine->inputManager.getIntDelta(5) == 1 && food.size() < 2)
+    {
+        food.push_back(FoodObject(rand() % width, rand() % height));
+        LOG(TRACE) << "Adding food ";// << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
+    }
+    if (engine->inputManager.getIntDelta(6) == 1 && vortices.size() < 2)
+    {
+        vortices.push_back(VortexObject(rand() % width, rand() % height));
+        LOG(TRACE) << "Adding vortex "; // << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
     }
 }
 
@@ -78,6 +88,32 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
 
     renderTarget.draw(posCursorSpr);
     renderTarget.draw(negCursorSpr);
+
+    sf::Sprite foodHighSpr(foodHighTex);
+    sf::Sprite foodLowSpr(foodLowTex);
+    foodHighSpr.setOrigin(3.f, 3.f);
+    foodLowSpr.setOrigin(3.f, 3.f);
+    for (auto& foodObj : food)
+    {
+        if (foodObj.ticksLeft > FOOD_TICKS / 2)
+        {
+            foodHighSpr.setPosition(static_cast<sf::Vector2f>(foodObj.getPos()));
+            renderTarget.draw(foodHighSpr);
+        }
+        else
+        {
+            foodLowSpr.setPosition(static_cast<sf::Vector2f>(foodObj.getPos()));
+            renderTarget.draw(foodLowSpr);
+        }
+    }
+
+    sf::Sprite vortSpr(vortexTex);
+    vortSpr.setOrigin(3.f, 3.f);
+    for (auto& vortObj : vortices)
+    {
+        vortSpr.setPosition(static_cast<sf::Vector2f>(vortObj.getPos()));
+        renderTarget.draw(vortSpr);
+    }
 }
 
 void OrganismCellWorld::moveCursor()
@@ -164,6 +200,62 @@ void OrganismCellWorld::updateBirthChances()
             else cells[index].birthChance = ECSE::clamp(0.f, 1.f, strength / (dist * dist));
         }
     }
+
+    const int foodEffectSize = 30;
+    const float foodStrength = 50.f;
+    // Increase likelihood of cells being born near food
+    for (auto& foodObj : food) {
+        sf::Vector2i pos = foodObj.getPos();
+
+        for (int x = static_cast<int>(pos.x) - foodEffectSize; x < static_cast<int>(pos.x) + foodEffectSize; ++x)
+        {
+            for (int y = static_cast<int>(pos.y) - foodEffectSize; y < static_cast<int>(pos.y) + foodEffectSize; ++y)
+            {
+                size_t index = indexFromPos(x, y);
+                float dx1 = ECSE::wrapDifference(static_cast<float>(pos.x), 
+                        static_cast<float>(x),
+                        static_cast<float>(width)),
+                    dy1 = ECSE::wrapDifference(static_cast<float>(pos.y),
+                        static_cast<float>(y),
+                        static_cast<float>(height));
+                float dist = sqrt(dx1 * dx1 + dy1 * dy1);
+
+                if (dist == 0.f) cells[index].birthChance = 1.f;
+                else
+                {
+                    cells[index].birthChance = std::max(cells[index].birthChance, ECSE::clamp(0.f, 1.f, foodStrength / (dist * dist)));
+                }
+            }
+        }
+    }
+
+    const int vortexEffectSize = 20;
+    const float vortexStrength = 25.f;
+    // Increase likelihood of cells being born near vortex
+    for (auto& vortexObj : vortices) {
+        sf::Vector2i pos = vortexObj.getPos();
+
+        for (int x = static_cast<int>(pos.x) - vortexEffectSize; x < static_cast<int>(pos.x) + vortexEffectSize; ++x)
+        {
+            for (int y = static_cast<int>(pos.y) - vortexEffectSize; y < static_cast<int>(pos.y) + vortexEffectSize; ++y)
+            {
+                size_t index = indexFromPos(x, y);
+                float dx1 = ECSE::wrapDifference(static_cast<float>(pos.x),
+                    static_cast<float>(x),
+                    static_cast<float>(width)),
+                    dy1 = ECSE::wrapDifference(static_cast<float>(pos.y),
+                    static_cast<float>(y),
+                    static_cast<float>(height));
+                float dist = sqrt(dx1 * dx1 + dy1 * dy1);
+
+                if (dist == 0.f) cells[index].birthChance = 1.f;
+                else
+                {
+                    cells[index].birthChance = std::max(cells[index].birthChance, ECSE::clamp(0.f, 1.f, vortexStrength / (dist * dist)));
+                }
+            }
+        }
+    }
 }
 
 void OrganismCellWorld::updateDeathChances()
@@ -239,6 +331,7 @@ void OrganismCellWorld::redistributeCells()
     auto bornIter = born.begin();
     auto diedIter = died.begin();
 
+    // DEBUG ADD/REMOVE FOOD
     if (engine->inputManager.getIntValue(4) > 0) toAdd += 100;
     else if (engine->inputManager.getIntValue(4) < 0) toRemove += 100;
 
@@ -366,4 +459,62 @@ void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
     }
 }
 
+void OrganismCellWorld::calculateFood()
+{
+    for (auto foodIter = food.begin(); foodIter != food.end(); )
+    {
+        sf::Vector2i pos = (*foodIter).getPos();
+
+        // Is the tile occupied alive
+        if (cells[indexFromPos(pos.x, pos.y)].alive)
+        {
+            // Do we still have time left
+            if ((*foodIter).ticksLeft > 0)
+            {
+                --(*foodIter).ticksLeft;
+                toAdd += feed;
+            }
+            // Remove
+            else
+            {
+                // "Advance" foodIter
+                foodIter = food.erase(foodIter);
+                continue;
+            }
+        }
+
+        // Advance foodIter
+        ++foodIter;
+    }
+}
+
+
+void OrganismCellWorld::calculateVortex()
+{
+    for (auto vortexIter = vortices.begin(); vortexIter != vortices.end();)
+    {
+        sf::Vector2i pos = (*vortexIter).getPos();
+
+        // Is the tile occupied alive
+        if (cells[indexFromPos(pos.x, pos.y)].alive)
+        {
+            // Do we still have time left
+            if ((*vortexIter).ticksLeft > 0)
+            {
+                --(*vortexIter).ticksLeft;
+                toRemove += suck;
+            }
+            // Remove
+            else
+            {
+                // "Advance" vortexIter
+                vortexIter = vortices.erase(vortexIter);
+                continue;
+            }
+        }
+
+        // Advance vortexIter
+        ++vortexIter;
+    }
+}
 }

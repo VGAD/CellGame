@@ -218,11 +218,14 @@ NeighborArray CellWorld<CellType>::getNeighbors(unsigned index)
 {
     NeighborArray result;
 
-    auto indices = getNeighborIndices(index);
+    auto pos = sf::Vector2i(index % width, index / width);
 
     for (unsigned i = 0; i < offsets.size(); ++i)
     {
-        unsigned neighborIndex = indices[i];
+        auto neighborPos = pos;
+        neighborPos += offsets[i];
+
+        unsigned neighborIndex = indexFromPos(neighborPos.x, neighborPos.y);
 
         if (neighborIndex == -1)
         {

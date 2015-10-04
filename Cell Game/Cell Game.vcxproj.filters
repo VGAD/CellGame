@@ -24,6 +24,9 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{7a7f9cd9-94c0-4166-b0b1-5ea704e01f8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Automata\Objects">
+      <UniqueIdentifier>{af1fe021-1733-40ae-95a0-acd6b4aa262f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,6 +75,15 @@
     </ClInclude>
     <ClInclude Include="CellEngine.h">
       <Filter>Source Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldObject.h">
+      <Filter>Source Files\Automata\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="FoodObject.h">
+      <Filter>Source Files\Automata\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="VortexObject.h">
+      <Filter>Source Files\Automata\Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

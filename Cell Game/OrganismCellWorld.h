@@ -3,6 +3,8 @@
 #include "ECSE/Engine.h"
 #include "CellWorld.h"
 #include "OrganismCell.h"
+#include "FoodObject.h"
+#include "VortexObject.h"
 
 namespace CellGame
 {
@@ -44,9 +46,21 @@ public:
     */
     virtual void floodFillOrganism(unsigned int startCell, bool find);
 
+    //! Calculate how food affects the cells.
+    virtual void calculateFood();
+
+    //! Calculate how vortices affects the cells
+    virtual void calculateVortex();
+
 private:
     //! Up to this many dead cells will be removed with no replacement each frame.
     const float decay = 1.5f;
+
+    //! Add this many cells per tick that food is feeding the blob
+    const int feed = 3;
+    
+    //! Remove this many cells per tick that vortex is killing the blob
+    const int suck = 2;
 
     //! Engine pointer to get access to input
     ECSE::Engine* engine;   
@@ -54,8 +68,8 @@ private:
     //! Vectors representing current cursor positions
     sf::Vector2f posCursor, negCursor;
 
-    //! Graphics for cursors
-    const sf::Texture& posCursorTex, negCursorTex;
+    //! Graphics for cursors and food and vortices
+    const sf::Texture& posCursorTex, negCursorTex, foodHighTex, foodLowTex, vortexTex;
 
     //! The number of cells to remove this frame.
     /*!
@@ -74,6 +88,12 @@ private:
 
     //! The next organism index to use.
     unsigned int nextOrgIndex = 1;
+
+    //! Vector of currect food locations
+    std::vector<FoodObject> food;
+
+    //! Vector of currect vortex locations
+    std::vector<VortexObject> vortices;
 };
 
 }
