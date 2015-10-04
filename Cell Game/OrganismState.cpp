@@ -4,7 +4,7 @@ namespace CellGame
 {
 
 OrganismState::OrganismState(ECSE::Engine* engine)
-    : ECSE::State(engine), cellWorld(engine, 400, 300)
+    : ECSE::State(engine), cellWorld(engine, 200, 150)
 {
     cellWorld.looping = true;
     cellWorld.init();

@@ -34,7 +34,7 @@ int main(int argv, char* argc[])
     try
     {
         // Run the game
-        CellEngine engine(sf::Vector2i(400, 300), 2.f, "Cell Game");
+        CellEngine engine(sf::Vector2i(200, 150), 4.f, "Cell Game");
 
         // Set up input for posCursor
         engine.inputManager.bindInput(0, 0, sf::Keyboard::A, sf::Keyboard::D);

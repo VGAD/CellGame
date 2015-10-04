@@ -33,7 +33,7 @@ void OrganismCellWorld::init()
             int dx = x - center.x;
             int dy = y - center.y;
 
-            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.3;
+            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.1;
         }
     }
 
@@ -135,20 +135,20 @@ void OrganismCellWorld::moveCursor()
 
     // Move at full speed inside the cell
     if (cells[indexPos].alive) {
-        posCursor += movementPos * 2.f;
+        posCursor += movementPos * 1.f;
     }
     // Slower outside of the cell
     else {
-        posCursor += movementPos * 0.5f;
+        posCursor += movementPos * 0.25f;
     }
 
     // Move slower inside the cell
     if (cells[indexNeg].alive) {
-        negCursor += movementNeg * 0.5f;
+        negCursor += movementNeg * 0.25f;
     }
     // Faster outside of the cell
     else {
-        negCursor += movementNeg * 2.f;
+        negCursor += movementNeg * 1.f;
     }
 
     // Mod to wrap
@@ -183,8 +183,8 @@ void OrganismCellWorld::updateBirthChances()
     // Below a certain number of cells, disable player control and let the death spiral finish
     if (aliveCount < 200) return;
 
-    const int cursorEffectSize = 30;
-    const float strength = 40.f;
+    const int cursorEffectSize = 10;
+    const float strength = 10.f;
 
     // Increase likelihood of cells being born near cursor
     for (int x = static_cast<int>(posCursor.x) - cursorEffectSize; x < static_cast<int>(posCursor.x) + cursorEffectSize; ++x)
@@ -201,8 +201,8 @@ void OrganismCellWorld::updateBirthChances()
         }
     }
 
-    const int foodEffectSize = 30;
-    const float foodStrength = 50.f;
+    const int foodEffectSize = 15;
+    const float foodStrength = 25.f;
     // Increase likelihood of cells being born near food
     for (auto& foodObj : food) {
         sf::Vector2i pos = foodObj.getPos();
@@ -229,8 +229,8 @@ void OrganismCellWorld::updateBirthChances()
         }
     }
 
-    const int vortexEffectSize = 20;
-    const float vortexStrength = 25.f;
+    const int vortexEffectSize = 10;
+    const float vortexStrength = 12.5f;
     // Increase likelihood of cells being born near vortex
     for (auto& vortexObj : vortices) {
         sf::Vector2i pos = vortexObj.getPos();
@@ -265,8 +265,8 @@ void OrganismCellWorld::updateDeathChances()
         cell.deathChance = 0.f;
     }
 
-    const int cursorEffectSize = 30;
-    const float strength = 100.f;
+    const int cursorEffectSize = 15;
+    const float strength = 50.f;
     const float maxChance = .40f; // This should be < 1-(cell die chance)
 
     // Increase likelihood of cells being born near cursor
