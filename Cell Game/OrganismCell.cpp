@@ -39,9 +39,9 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
 
 sf::Color OrganismCell::getColor()
 {
-    if (alive) return attached ? sf::Color(60, 110, 30) : sf::Color(110, 60, 30);
+    if (alive) return attached ? sf::Color(140, 60, 20) : sf::Color(100, 100, 100);
 
-    return sf::Color(0, 0, 0);
+    return sf::Color(40, 20, 5);
 }
 
 }
