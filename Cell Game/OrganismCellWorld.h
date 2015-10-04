@@ -35,6 +35,9 @@ public:
     virtual void redistributeCells();
 
 private:
+    //! Up to this many dead cells will be removed with no replacement each frame.
+    const float decay = 1.5f;
+
     //! Engine pointer to get access to input
     ECSE::Engine* engine;   
 
@@ -43,6 +46,12 @@ private:
 
     //! Graphics for cursors
     const sf::Texture& posCursorTex, negCursorTex;
+
+    //! The number of cells to remove this frame.
+    /*!
+    * This accumulates, and when it reaches at least 1, a cell is removed.
+    */
+    float toRemove = 0.f;
 };
 
 }

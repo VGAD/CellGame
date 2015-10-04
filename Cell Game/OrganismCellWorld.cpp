@@ -127,12 +127,20 @@ void OrganismCellWorld::moveCursor()
 
 void OrganismCellWorld::updateBirthChances()
 {
+    size_t aliveCount = 0;
+
     for (auto& cell : cells)
     {
         cell.birthChance = 0.f;
+
+        if (cell.alive) ++aliveCount;
     }
 
+    // Below a certain number of cells, disable player control and let the death spiral finish
+    if (aliveCount < 200) return;
+
     const int cursorEffectSize = 30;
+    const float strength = 40.f;
 
     // Increase likelihood of cells being born near cursor
     for (int x = static_cast<int>(posCursor.x) - cursorEffectSize; x < static_cast<int>(posCursor.x) + cursorEffectSize; ++x)
@@ -145,7 +153,7 @@ void OrganismCellWorld::updateBirthChances()
             float dist = sqrt(dx1 * dx1 + dy1 * dy1);
             
             if (dist == 0.f) cells[index].birthChance = 1.f;
-            else cells[index].birthChance = ECSE::clamp(0.f, 1.f, 40.f / (dist * dist));
+            else cells[index].birthChance = ECSE::clamp(0.f, 1.f, strength / (dist * dist));
         }
     }
 }
@@ -201,6 +209,27 @@ void OrganismCellWorld::redistributeCells()
     auto bornIter = born.begin();
     auto diedIter = died.begin();
 
+    // Accumulate number of dead cells
+    toRemove += decay;
+
+    // If we've accumulated enough decay, kill off some cells permanently
+    while (toRemove > 1.f && diedIter != died.end())
+    {
+        cells[*diedIter].alive = false;
+        ++diedIter;
+
+        toRemove -= 1.f;
+    }
+    
+    // If there's leftover decay, stop some cells from being born
+    while (toRemove > 1.f && bornIter != born.end())
+    {
+        ++bornIter;
+
+        toRemove -= 1.f;
+    }
+
+    // Redistribute dead cells into born cells
     while (bornIter != born.end() && diedIter != died.end())
     {
         cells[*bornIter].alive = true;
