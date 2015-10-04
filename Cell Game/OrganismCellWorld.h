@@ -64,7 +64,7 @@ public:
 
 private:
     //! Up to this many dead cells will be removed with no replacement each frame.
-    const float decay = 1.5f;
+    const float decay = 0.8f;
 
     //! Add this many cells per tick that food is feeding the blob
     const int feed = 7;
@@ -100,13 +100,16 @@ private:
     unsigned int nextOrgIndex = 1;
 
     //! Vector of currect food locations
-    std::vector<FoodObject> food;
+    std::deque<FoodObject> food;
 
     //! Vector of currect vortex locations
-    std::vector<VortexObject> vortices;
+    std::deque<VortexObject> vortices;
     
     //! Vector of cell modifiers
     std::vector<int> modifiers;
+
+    //! Timer for spawning food.
+    unsigned int foodTimer = 0;
 };
 
 }

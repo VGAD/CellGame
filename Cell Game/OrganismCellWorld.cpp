@@ -67,15 +67,34 @@ void OrganismCellWorld::step()
     calculateVortex();
     moveCursor();
 
-    if (engine->inputManager.getIntDelta(5) == 1 && food.size() < 2)
+    ++foodTimer;
+
+    std::vector<size_t> deadIndices;
+    for (size_t i = 0; i < cells.size(); ++i)
     {
-        food.push_back(FoodObject(rand() % width, rand() % height));
-        LOG(TRACE) << "Adding food ";// << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
+        if (!cells[i].alive) deadIndices.push_back(i);
     }
-    if (engine->inputManager.getIntDelta(6) == 1 && vortices.size() < 2)
+
+    if (deadIndices.size() > 0)
     {
-        vortices.push_back(VortexObject(rand() % width, rand() % height));
-        LOG(TRACE) << "Adding vortex "; // << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
+        if ((engine->inputManager.getIntDelta(5) == 1 || (foodTimer % 240) == 0))
+        {
+            sf::Vector2i pos;
+            posFromIndex(deadIndices[rand() % deadIndices.size()], pos);
+
+            food.push_back(FoodObject(pos.x, pos.y));
+
+            if (food.size() > 3)
+            {
+                food.pop_front();
+            }
+        }
+
+        if (engine->inputManager.getIntDelta(6) == 1 && vortices.size() < 2)
+        {
+            vortices.push_back(VortexObject(rand() % width, rand() % height));
+            LOG(TRACE) << "Adding vortex "; // << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
+        }
     }
 }
 
