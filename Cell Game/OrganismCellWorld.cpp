@@ -38,10 +38,10 @@ void OrganismCellWorld::init()
         }
     }
 
-    posCursor.x = center.x;
-    posCursor.y = center.y;
-    negCursor.x = center.x;
-    negCursor.y = center.y;
+    posCursor.x = static_cast<float>(center.x);
+    posCursor.y = static_cast<float>(center.y);
+    negCursor.x = static_cast<float>(center.x);
+    negCursor.y = static_cast<float>(center.y);
 }
 
 void OrganismCellWorld::step()
@@ -95,16 +95,25 @@ void OrganismCellWorld::step()
         ++diedIter;
     }
 
-    int dx = engine->inputManager.getIntValue(0),
-        dy = engine->inputManager.getIntValue(1);
+    // Get input
+    float dx = engine->inputManager.getFloatValue(0),
+        dy = engine->inputManager.getFloatValue(1);
 
-    int index = indexFromPos(posCursor.x + dx * 3, posCursor.y + dy * 3);
+    // 5 = width and height of cursor sprite
+    int index = indexFromPos(
+        static_cast<int>(posCursor.x + dx * 5.f),
+        static_cast<int>(posCursor.y + dy * 5.f));
 
+    // Move at full speed inside the cell
     if (cells[index].alive) {
-        posCursor.x += dx;
-        posCursor.y += dy;
+        posCursor.x += dx * 2;
+        posCursor.y += dy * 2;
     }
-    
+    // Slower outside of the cell
+    else {
+        posCursor.x += dx / 2;
+        posCursor.y += dy / 2;
+    }
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
@@ -112,7 +121,9 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
     CellWorld<OrganismCell>::render(alpha, renderTarget);
 
     sf::Sprite posCursorSpr(posCursorTex);
-    posCursorSpr.setPosition(static_cast<sf::Vector2f>(posCursor));
+    posCursorSpr.setPosition(
+        floor(posCursor.x),
+        floor(posCursor.y));
 
     renderTarget.draw(posCursorSpr);
 }
