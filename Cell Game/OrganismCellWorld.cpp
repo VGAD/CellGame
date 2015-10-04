@@ -54,13 +54,13 @@ void OrganismCellWorld::step()
     const int cursorEffectSize = 20;
 
     // Increase likelihood of cells being born near cursor
-    for (int x = posCursor.x - cursorEffectSize; x < posCursor.x + cursorEffectSize; ++x)
+    for (int x = static_cast<int>(posCursor.x) - cursorEffectSize; x < static_cast<int>(posCursor.x) + cursorEffectSize; ++x)
     {
-        for (int y = posCursor.y - cursorEffectSize; y < posCursor.y + cursorEffectSize; ++y)
+        for (int y = static_cast<int>(posCursor.y) - cursorEffectSize; y < static_cast<int>(posCursor.y) + cursorEffectSize; ++y)
         {
             size_t index = indexFromPos(x, y);
-            float dx1 = ECSE::wrapDifference(static_cast<float>(posCursor.x), static_cast<float>(x), static_cast<float>(width)),
-                  dy1 = ECSE::wrapDifference(static_cast<float>(posCursor.y), static_cast<float>(y), static_cast<float>(height));
+            float dx1 = ECSE::wrapDifference(posCursor.x, static_cast<float>(x), static_cast<float>(width)),
+                  dy1 = ECSE::wrapDifference(posCursor.y, static_cast<float>(y), static_cast<float>(height));
             float dist = sqrt(dx1 * dx1 + dy1 * dy1);
             
             if (dist == 0.f) cells[index].birthChance = 1.f;

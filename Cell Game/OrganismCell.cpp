@@ -27,7 +27,7 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
     }
 
     bool randomDie = (rand() % 100 < 60) && (aliveNeighbors < 6);
-    bool randomSpawn = (rand() % 100 < static_cast<int>(100 * birthChance)) && (aliveNeighbors > 3);
+    bool randomSpawn = (rand() % 100 < static_cast<int>(100 * birthChance)) && (aliveNeighbors > 2);
 
     nextAlive = (aliveNeighbors > 2 && !randomDie) || randomSpawn;
 }
