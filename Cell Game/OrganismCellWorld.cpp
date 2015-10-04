@@ -43,7 +43,7 @@ void OrganismCellWorld::init()
             int dx = x - center.x;
             int dy = y - center.y;
 
-            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.1;
+            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.15;
         }
     }
 
@@ -166,17 +166,6 @@ void OrganismCellWorld::moveCursor()
     posCursor.y = static_cast<float>(fmod(posCursor.y + height, height));
     negCursor.x = static_cast<float>(fmod(negCursor.x + width, width));
     negCursor.y = static_cast<float>(fmod(negCursor.y + height, height));
-
-    size_t indexPosCur = indexFromPos(static_cast<int>(posCursor.x), static_cast<int>(posCursor.y));
-    if (cells[indexPosCur].organism != 0)
-    {
-        playerOrganism = cells[indexPosCur].organism;
-    }
-
-    for (auto& cell : cells)
-    {
-        cell.attached = cell.organism == playerOrganism;
-    }
 }
 
 void OrganismCellWorld::updateBirthChances()
@@ -316,9 +305,21 @@ void OrganismCellWorld::indexOrganisms()
 
 void OrganismCellWorld::redistributeCells()
 {
-    std::vector<size_t> born;
-    std::vector<size_t> died;
+    size_t indexPosCur = indexFromPos(static_cast<int>(posCursor.x), static_cast<int>(posCursor.y));
+    if (cells[indexPosCur].organism != 0)
+    {
+        playerOrganism = cells[indexPosCur].organism;
+    }
+
+    for (auto& cell : cells)
+    {
+        cell.attached = cell.organism == playerOrganism;
+    }
+
+    std::map<unsigned, std::vector<size_t>> born;
+    std::map<unsigned, std::vector<size_t>> died;
     std::vector<size_t> changed;
+    std::set<unsigned> organisms;
 
     for (size_t i = 0; i < cells.size(); ++i)
     {
@@ -326,20 +327,15 @@ void OrganismCellWorld::redistributeCells()
 
         if (cell.nextAlive && !cell.alive)
         {
-            born.push_back(i);
+            born[cell.organism].push_back(i);
+            organisms.insert(cell.organism);
         }
         else if (!cell.nextAlive && cell.alive)
         {
-            died.push_back(i);
+            died[cell.organism].push_back(i);
+            organisms.insert(cell.organism);
         }
     }
-
-    // Shuffle the list of cells that died/were born
-    std::random_shuffle(died.begin(), died.end());
-    std::random_shuffle(born.begin(), born.end());
-
-    auto bornIter = born.begin();
-    auto diedIter = died.begin();
 
     // DEBUG ADD/REMOVE FOOD
     if (engine->inputManager.getIntValue(4) > 0) toAdd += 100;
@@ -348,36 +344,64 @@ void OrganismCellWorld::redistributeCells()
     // Accumulate number of dead cells
     toRemove += decay;
 
-    // If we've accumulated enough decay, kill off some cells permanently
-    while (toRemove > 1.f && diedIter != died.end())
+    for (auto organism : organisms)
     {
-        cells[*diedIter].alive = false;
-        changed.push_back(*diedIter);
-        ++diedIter;
+        auto& orgBorn = born[organism];
+        auto& orgDied = died[organism];
 
-        toRemove -= 1.f;
-    }
+        // Shuffle the list of cells that died/were born
+        std::random_shuffle(orgBorn.begin(), orgBorn.end());
+        std::random_shuffle(orgDied.begin(), orgDied.end());
 
-    // If we have cells to add then do so
-    while (toAdd > 0 && bornIter != born.end())
-    {
-        cells[*bornIter].alive = true;
-        changed.push_back(*bornIter);
-        ++bornIter;
+        auto bornIter = orgBorn.begin();
+        auto diedIter = orgDied.begin();
 
-        toAdd -= 1;
-    }
+        if (organism == playerOrganism)
+        {
+            // If we've accumulated enough decay, kill off some cells permanently
+            while (toRemove > 1.f && diedIter != orgDied.end())
+            {
+                cells[*diedIter].alive = false;
+                changed.push_back(*diedIter);
+                ++diedIter;
 
-    // Redistribute dead cells into born cells
-    while (bornIter != born.end() && diedIter != died.end())
-    {
-        cells[*bornIter].alive = true;
-        cells[*diedIter].alive = false;
-        changed.push_back(*bornIter);
-        changed.push_back(*diedIter);
+                toRemove -= 1.f;
+            }
 
-        ++bornIter;
-        ++diedIter;
+            // If we have cells to add then do so
+            while (toAdd > 0 && bornIter != orgBorn.end())
+            {
+                cells[*bornIter].alive = true;
+                changed.push_back(*bornIter);
+                ++bornIter;
+
+                toAdd -= 1;
+            }
+        }
+        else
+        {
+            // Kill cells randomly
+            unsigned killRandom = rand() % 6;
+            for (unsigned i = 0; i < killRandom && diedIter != orgDied.end(); ++i)
+            {
+                cells[*diedIter].alive = false;
+                changed.push_back(*diedIter);
+                ++diedIter;
+            }
+        }
+
+        // Redistribute dead cells into born cells
+        while (bornIter != orgBorn.end() && diedIter != orgDied.end())
+        {
+            cells[*bornIter].alive = true;
+            cells[*diedIter].alive = false;
+
+            changed.push_back(*bornIter);
+            changed.push_back(*diedIter);
+
+            ++bornIter;
+            ++diedIter;
+        }
     }
 
     std::random_shuffle(changed.begin(), changed.end());
@@ -482,8 +506,10 @@ void OrganismCellWorld::calculateFood()
     {
         sf::Vector2i pos = (*foodIter).getPos();
 
-        // Is the tile occupied alive
-        if (cells[indexFromPos(pos.x, pos.y)].alive)
+        auto& cell = cells[indexFromPos(pos.x, pos.y)];
+
+        // Is the tile occupied alive and part of the player
+        if (cell.alive && cell.attached)
         {
             // Do we still have time left
             if ((*foodIter).ticksLeft > 0)
