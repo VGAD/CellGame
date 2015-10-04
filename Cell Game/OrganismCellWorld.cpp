@@ -1,6 +1,7 @@
 #include "OrganismCellWorld.h"
 #include "ECSE/Logging.h"
 #include "ECSE/Common.h"
+#include "ECSE/VectorMath.h"
 
 namespace CellGame
 {
@@ -110,15 +111,16 @@ void OrganismCellWorld::step()
         static_cast<int>(posCursor.x + dx * 5.f),
         static_cast<int>(posCursor.y + dy * 5.f));
 
+    auto movement = sf::Vector2f(dx, dy);
+    ECSE::normalize(movement);
+
     // Move at full speed inside the cell
     if (cells[index].alive) {
-        posCursor.x += dx * 2;
-        posCursor.y += dy * 2;
+        posCursor += movement * 2.f;
     }
     // Slower outside of the cell
     else {
-        posCursor.x += dx / 2;
-        posCursor.y += dy / 2;
+        posCursor += movement * 0.5f;
     }
 
     posCursor.x = static_cast<float>(fmod(posCursor.x + width, width));
