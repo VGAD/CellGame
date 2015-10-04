@@ -295,7 +295,7 @@ void OrganismCellWorld::calculateFood()
             if ((*foodIter).ticksLeft > 0)
             {
                 --(*foodIter).ticksLeft;
-                toAdd += 3;
+                toAdd += feed;
             }
             // Remove
             else
