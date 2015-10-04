@@ -16,21 +16,6 @@ void OrganismCellWorld::init()
 {
     CellWorld<OrganismCell>::init();
 
-    // Set up input for posCursor
-    engine->inputManager.bindInput(0, 0, sf::Keyboard::A, sf::Keyboard::D);
-    engine->inputManager.bindInput(1, 0, sf::Keyboard::W, sf::Keyboard::S);
-    
-    // Set up input for negCursor
-    engine->inputManager.bindInput(2, 0, 
-        sf::Keyboard::Left, sf::Keyboard::Right);
-    engine->inputManager.bindInput(3, 0, 
-        sf::Keyboard::Up, sf::Keyboard::Down);
-
-    // Set up test input
-    engine->inputManager.bindInput(4, 0, sf::Keyboard::SemiColon, sf::Keyboard::P); // Shrink/Grow
-    engine->inputManager.bindInput(5, 0, sf::Keyboard::BackSlash); // Food
-
-
     sf::Vector2i center
     {
         static_cast<int>(width / 2),
