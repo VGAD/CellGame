@@ -64,13 +64,19 @@ public:
 
 private:
     //! Up to this many dead cells will be removed with no replacement each frame.
-    const float decay = 1.2f;
+    const float decay = 1.f;
 
     //! Add this many cells per tick that food is feeding the blob
     const int feed = 7;
     
     //! Remove this many cells per tick that vortex is killing the blob
     const int suck = 2;
+
+    bool gameOver = false;
+
+    const unsigned scoreMax = 30;
+
+    unsigned score = 0;
 
     //! Engine pointer to get access to input
     ECSE::Engine* engine;   
@@ -110,6 +116,10 @@ private:
 
     //! Timer for spawning food.
     unsigned int foodTimer = 0;
+
+    sf::Font scoreFont;
+
+    size_t aliveCount = 0;
 };
 
 }

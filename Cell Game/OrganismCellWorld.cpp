@@ -12,6 +12,7 @@ OrganismCellWorld::OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsi
     foodHighTex(engine->textureManager.get("foodHigh.png")), foodLowTex(engine->textureManager.get("foodLow.png")),
     vortexTex(engine->textureManager.get("vortex.png"))
 {
+    scoreFont.loadFromFile("04B_03.TTF");
 }
 
 void OrganismCellWorld::init()
@@ -49,7 +50,7 @@ void OrganismCellWorld::init()
 
     posCursor.x = static_cast<float>(center.x);
     posCursor.y = static_cast<float>(center.y);
-    negCursor.x = static_cast<float>(center.x);
+    negCursor.x = static_cast<float>(center.x + 50);
     negCursor.y = static_cast<float>(center.y);
 
     indexOrganisms();
@@ -82,11 +83,21 @@ void OrganismCellWorld::step()
             sf::Vector2i pos;
             posFromIndex(deadIndices[rand() % deadIndices.size()], pos);
 
-            food.push_back(FoodObject(pos.x, pos.y));
-
-            if (food.size() > 3)
+            if (food.size() == 3)
             {
-                food.pop_front();
+                auto& foodIt = food.begin();
+
+                while (foodIt->ticksLeft < FOOD_TICKS && foodIt != food.end()) ++foodIt;
+
+                if (foodIt != food.end())
+                {
+                    food.erase(foodIt);
+                    food.push_back(FoodObject(pos.x, pos.y));
+                }
+            }
+            else
+            {
+                food.push_back(FoodObject(pos.x, pos.y));
             }
         }
 
@@ -149,6 +160,35 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
         vortSpr.setPosition(static_cast<sf::Vector2f>(vortObj.getPos()));
         renderTarget.draw(vortSpr);
     }
+
+    bool gameOver = (score >= scoreMax) || aliveCount < 200;
+
+    if (!gameOver)
+    {
+        sf::Text scoreText(std::to_string(score) + "/" + std::to_string(scoreMax) +  " EATEN", scoreFont);
+        scoreText.setCharacterSize(8);
+        scoreText.setPosition(1.f, -2.f);
+        renderTarget.draw(scoreText);
+    }
+    else
+    {
+        sf::Text winText;
+        winText.setFont(scoreFont);
+        winText.setCharacterSize(8);
+
+        if (score >= scoreMax)
+        {
+            winText.setString("CANCER WINS!");
+        }
+        else
+        {
+            winText.setString("ANTI-CANCER WINS!");
+        }
+
+        winText.setOrigin(floor(winText.getLocalBounds().width * 0.5f), floor(winText.getLocalBounds().height * 0.5f));
+        winText.setPosition(width * 0.5f, height * 0.5f);
+        renderTarget.draw(winText);
+    }
 }
 
 void OrganismCellWorld::moveCursor()
@@ -169,12 +209,17 @@ void OrganismCellWorld::moveCursor()
     ECSE::normalize(movementNeg);
 
     // Move at full speed inside the cell
-    if (cells[indexPos].alive) {
-        posCursor += movementPos * 1.5f;
-    }
-    // Slower outside of the cell
-    else {
-        posCursor += movementPos * 0.25f;
+    if (aliveCount >= 200)
+    {
+        if (cells[indexPos].alive)
+        {
+            posCursor += movementPos * 1.5f;
+        }
+        // Slower outside of the cell
+        else
+        {
+            posCursor += movementPos * 0.25f;
+        }
     }
 
     // Move slower inside the cell
@@ -195,13 +240,9 @@ void OrganismCellWorld::moveCursor()
 
 void OrganismCellWorld::updateBirthChances()
 {
-    size_t aliveCount = 0;
-
     for (auto& cell : cells)
     {
         cell.birthChance = 0.f;
-
-        if (cell.alive) ++aliveCount;
     }
 
     // Below a certain number of cells, disable player control and let the death spiral finish
@@ -462,6 +503,12 @@ void OrganismCellWorld::redistributeCells()
             }
         }
     }
+
+    aliveCount = 0;
+    for (auto& cell : cells)
+    {
+        if (cell.alive && cell.attached) ++aliveCount;
+    }
 }
 
 void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
@@ -547,6 +594,7 @@ void OrganismCellWorld::calculateFood()
             {
                 // "Advance" foodIter
                 foodIter = food.erase(foodIter);
+                ++score;
                 continue;
             }
         }
