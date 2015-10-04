@@ -1,3 +1,4 @@
+#include "ECSE/Logging.h"
 #include "OrganismCell.h"
 
 namespace CellGame
@@ -26,7 +27,9 @@ void OrganismCell::advance(std::array<AutomataCell*, DIRECTION_COUNT> neighbors)
         if (organism->prevAlive) ++aliveNeighbors;
     }
 
-    bool randomDie = (rand() % 100 < 60) && (aliveNeighbors < 6);
+    int dieChance = 60 + static_cast<int>(100 * deathChance);
+    bool randomDie = (rand() % 100 < dieChance) && (aliveNeighbors < 6);
+
     bool randomSpawn = (rand() % 100 < static_cast<int>(100 * birthChance)) && (aliveNeighbors > 2);
 
     nextAlive = (aliveNeighbors > 2 && !randomDie) || randomSpawn;

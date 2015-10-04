@@ -16,6 +16,7 @@ public:
     virtual sf::Color getColor() override;
 
     float birthChance;      //!< Likelihood of a random birth on organism edge.
+    float deathChance;      //!< Likelihood of a random death on organism edge.
     bool alive;             //!< Whether this cell is alive.
     bool nextAlive;         //!< Whether the cell could be alive next step.
     bool prevAlive;         //!< Whether this was alive last step.
