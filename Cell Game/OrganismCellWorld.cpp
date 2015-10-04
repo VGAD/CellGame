@@ -112,6 +112,7 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
     CellWorld<OrganismCell>::render(alpha, renderTarget);
 
     sf::Sprite posCursorSpr(posCursorTex);
+    posCursorSpr.setOrigin(3.f, 3.f);
     posCursorSpr.setPosition(static_cast<sf::Vector2f>(posCursor));
 
     renderTarget.draw(posCursorSpr);
