@@ -114,6 +114,9 @@ void OrganismCellWorld::step()
         posCursor.x += dx / 2;
         posCursor.y += dy / 2;
     }
+
+    posCursor.x = static_cast<float>(fmod(posCursor.x + width, width));
+    posCursor.y = static_cast<float>(fmod(posCursor.y + height, height));
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
@@ -121,6 +124,9 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
     CellWorld<OrganismCell>::render(alpha, renderTarget);
 
     sf::Sprite posCursorSpr(posCursorTex);
+    
+    posCursorSpr.setOrigin(3.f, 3.f);
+    
     posCursorSpr.setPosition(
         floor(posCursor.x),
         floor(posCursor.y));
