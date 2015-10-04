@@ -27,7 +27,7 @@ private:
     ECSE::Engine* engine;   
 
     //! Vectors representing current cursor positions
-    sf::Vector2i posCursor, negCursor;
+    sf::Vector2f posCursor, negCursor;
 
     //! Graphics for cursors
     const sf::Texture& posCursorTex, negCursorTex;
