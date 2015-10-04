@@ -147,8 +147,9 @@ void OrganismCellWorld::updateBirthChances()
     if (aliveCount < 200) return;
 
     const int cursorEffectSize = 30;
-    const int foodEffectSize = 10;
     const float strength = 40.f;
+    const int foodEffectSize = 50;
+    const float foodStrength = 50;
 
     // Increase likelihood of cells being born near cursor
     for (int x = static_cast<int>(posCursor.x) - cursorEffectSize; x < static_cast<int>(posCursor.x) + cursorEffectSize; ++x)
@@ -164,8 +165,31 @@ void OrganismCellWorld::updateBirthChances()
             else cells[index].birthChance = ECSE::clamp(0.f, 1.f, strength / (dist * dist));
         }
     }
-    for (auto& foodPos : food) {
 
+    // Increase likelihood of cells being born near food
+    for (auto& foodObj : food) {
+        sf::Vector2i pos = foodObj.getPos();
+
+        for (int x = static_cast<int>(pos.x) - foodEffectSize; x < static_cast<int>(pos.x) + foodEffectSize; ++x)
+        {
+            for (int y = static_cast<int>(pos.y) - foodEffectSize; y < static_cast<int>(pos.y) + foodEffectSize; ++y)
+            {
+                size_t index = indexFromPos(x, y);
+                float dx1 = ECSE::wrapDifference(static_cast<float>(pos.x), 
+                        static_cast<float>(x),
+                        static_cast<float>(width)),
+                    dy1 = ECSE::wrapDifference(static_cast<float>(pos.y),
+                        static_cast<float>(y),
+                        static_cast<float>(height));
+                float dist = sqrt(dx1 * dx1 + dy1 * dy1);
+
+                if (dist == 0.f) cells[index].birthChance = 1.f;
+                else
+                {
+                    cells[index].birthChance = std::max(cells[index].birthChance, ECSE::clamp(0.f, 1.f, foodStrength / (dist * dist)));
+                }
+            }
+        }
     }
 }
 
