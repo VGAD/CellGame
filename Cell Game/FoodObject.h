@@ -10,11 +10,11 @@ class FoodObject :
 public:
     inline FoodObject(int x, int y);
 
-    int ticksLeft;  //!< Ticks left until this food is set to expire
+    int ticksLeft = 120;  //!< Ticks left until this food is set to expire
 };
 
 FoodObject::FoodObject(int x, int y)
-    : WorldObject(x, y), ticksLeft(120)
+    : WorldObject(x, y)
 {
 }
 
