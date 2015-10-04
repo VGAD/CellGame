@@ -8,7 +8,8 @@ namespace CellGame
 
 OrganismCellWorld::OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
     : CellWorld<OrganismCell>(width, height), engine(_engine),
-    posCursorTex(engine->textureManager.get("Player1.png")), negCursorTex(engine->textureManager.get("Player2.png"))
+    posCursorTex(engine->textureManager.get("Player1.png")), negCursorTex(engine->textureManager.get("Player2.png")),
+    foodTex(engine->textureManager.get("food.png"))
 {
 }
 
@@ -49,11 +50,13 @@ void OrganismCellWorld::step()
     CellWorld<OrganismCell>::step();
 
     redistributeCells();
+    calculateFood();
     moveCursor();
 
-    if (engine->inputManager.getIntValue(5)) {
-
-
+    if (engine->inputManager.getIntValue(5) && !engine->inputManager.getIntDelta(5) && food.size() < 2)
+    {
+        food.push_back(FoodObject(rand() % width, rand() % height));
+        LOG(TRACE) << "Adding food ";// << (*food.rbegin()).getPos().x << " " << (*food.rbegin()).getPos().y;
     }
 }
 
@@ -76,6 +79,15 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
 
     renderTarget.draw(posCursorSpr);
     renderTarget.draw(negCursorSpr);
+
+    sf::Sprite foodSpr(foodTex);
+    foodSpr.setOrigin(3.f, 3.f);
+    for (auto& foodObj : food)
+    {
+        foodSpr.setPosition(static_cast<sf::Vector2f>(foodObj.getPos()));
+        renderTarget.draw(foodSpr);
+    }
+
 }
 
 void OrganismCellWorld::moveCursor()
@@ -135,6 +147,7 @@ void OrganismCellWorld::updateBirthChances()
     if (aliveCount < 200) return;
 
     const int cursorEffectSize = 30;
+    const int foodEffectSize = 10;
     const float strength = 40.f;
 
     // Increase likelihood of cells being born near cursor
@@ -150,6 +163,9 @@ void OrganismCellWorld::updateBirthChances()
             if (dist == 0.f) cells[index].birthChance = 1.f;
             else cells[index].birthChance = ECSE::clamp(0.f, 1.f, strength / (dist * dist));
         }
+    }
+    for (auto& foodPos : food) {
+
     }
 }
 
@@ -206,6 +222,7 @@ void OrganismCellWorld::redistributeCells()
     auto bornIter = born.begin();
     auto diedIter = died.begin();
 
+    // DEBUG ADD/REMOVE FOOD
     if (engine->inputManager.getIntValue(4) > 0) toAdd += 100;
     else if (engine->inputManager.getIntValue(4) < 0) toRemove += 100;
 
@@ -238,6 +255,35 @@ void OrganismCellWorld::redistributeCells()
 
         ++bornIter;
         ++diedIter;
+    }
+}
+
+void OrganismCellWorld::calculateFood()
+{
+    for (auto foodIter = food.begin(); foodIter != food.end(); )
+    {
+        sf::Vector2i pos = (*foodIter).getPos();
+
+        // Is the tile occupied alive
+        if (cells[indexFromPos(pos.x, pos.y)].alive)
+        {
+            // Do we still have time left
+            if ((*foodIter).ticksLeft > 0)
+            {
+                --(*foodIter).ticksLeft;
+                toAdd += 3;
+            }
+            // Remove
+            else
+            {
+                // "Advance" foodIter
+                foodIter = food.erase(foodIter);
+                continue;
+            }
+        }
+
+        // Advance foodIter
+        ++foodIter;
     }
 }
 

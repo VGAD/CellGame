@@ -3,6 +3,7 @@
 #include "ECSE/Engine.h"
 #include "CellWorld.h"
 #include "OrganismCell.h"
+#include "FoodObject.h"
 
 namespace CellGame
 {
@@ -34,6 +35,9 @@ public:
     //! Redistribute dead and born cells.
     virtual void redistributeCells();
 
+    //! Calculate how food affects the cells.
+    virtual void calculateFood();
+
 private:
     //! Up to this many dead cells will be removed with no replacement each frame.
     const float decay = 1.5f;
@@ -44,8 +48,8 @@ private:
     //! Vectors representing current cursor positions
     sf::Vector2f posCursor, negCursor;
 
-    //! Graphics for cursors
-    const sf::Texture& posCursorTex, negCursorTex;
+    //! Graphics for cursors and food
+    const sf::Texture& posCursorTex, negCursorTex, foodTex;
 
     //! The number of cells to remove this frame.
     /*!
@@ -58,6 +62,9 @@ private:
     * This tries to be taken to 0 as soon as possible.
     */
     int toAdd = 0;
+
+    //! Vector of currect food locations
+    std::vector<FoodObject> food;
 };
 
 }

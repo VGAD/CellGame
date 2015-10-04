@@ -93,6 +93,8 @@
     <ClInclude Include="CellWorld.h" />
     <ClInclude Include="ConwayCell.h" />
     <ClInclude Include="ConwayTestState.h" />
+    <ClInclude Include="FoodObject.h" />
+    <ClInclude Include="WorldObject.h" />
     <ClInclude Include="OrganismCell.h" />
     <ClInclude Include="OrganismCellWorld.h" />
     <ClInclude Include="OrganismState.h" />
