@@ -52,7 +52,7 @@ private:
     sf::Vector2f posCursor, negCursor;
 
     //! Graphics for cursors and food
-    const sf::Texture& posCursorTex, negCursorTex, foodTex;
+    const sf::Texture& posCursorTex, negCursorTex, foodHighTex, foodLowTex;
 
     //! The number of cells to remove this frame.
     /*!

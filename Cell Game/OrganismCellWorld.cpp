@@ -9,7 +9,7 @@ namespace CellGame
 OrganismCellWorld::OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
     : CellWorld<OrganismCell>(width, height), engine(_engine),
     posCursorTex(engine->textureManager.get("Player1.png")), negCursorTex(engine->textureManager.get("Player2.png")),
-    foodTex(engine->textureManager.get("food.png"))
+    foodHighTex(engine->textureManager.get("foodHigh.png")), foodLowTex(engine->textureManager.get("foodLow.png"))
 {
 }
 
@@ -80,12 +80,22 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
     renderTarget.draw(posCursorSpr);
     renderTarget.draw(negCursorSpr);
 
-    sf::Sprite foodSpr(foodTex);
-    foodSpr.setOrigin(3.f, 3.f);
+    sf::Sprite foodHighSpr(foodHighTex);
+    sf::Sprite foodLowSpr(foodLowTex);
+    foodHighSpr.setOrigin(3.f, 3.f);
+    foodLowSpr.setOrigin(3.f, 3.f);
     for (auto& foodObj : food)
     {
-        foodSpr.setPosition(static_cast<sf::Vector2f>(foodObj.getPos()));
-        renderTarget.draw(foodSpr);
+        if (foodObj.ticksLeft > FOOD_TICKS / 2)
+        {
+            foodHighSpr.setPosition(static_cast<sf::Vector2f>(foodObj.getPos()));
+            renderTarget.draw(foodHighSpr);
+        }
+        else
+        {
+            foodLowSpr.setPosition(static_cast<sf::Vector2f>(foodObj.getPos()));
+            renderTarget.draw(foodLowSpr);
+        }
     }
 
 }
