@@ -145,7 +145,7 @@ void OrganismCellWorld::moveCursor()
 
     // Move at full speed inside the cell
     if (cells[indexPos].alive) {
-        posCursor += movementPos * 1.f;
+        posCursor += movementPos * 1.5f;
     }
     // Slower outside of the cell
     else {
@@ -158,7 +158,7 @@ void OrganismCellWorld::moveCursor()
     }
     // Faster outside of the cell
     else {
-        negCursor += movementNeg * 1.f;
+        negCursor += movementNeg * 1.5f;
     }
 
     // Mod to wrap
@@ -275,11 +275,11 @@ void OrganismCellWorld::updateDeathChances()
         cell.deathChance = 0.f;
     }
 
-    const int cursorEffectSize = 15;
-    const float strength = 50.f;
+    const int cursorEffectSize = 10;
+    const float strength = 10.f;
     const float maxChance = .40f; // This should be < 1-(cell die chance)
 
-    // Increase likelihood of cells being born near cursor
+    // Increase likelihood of cells being killed near cursor
     for (int x = static_cast<int>(negCursor.x) - cursorEffectSize; x < static_cast<int>(negCursor.x) + cursorEffectSize; ++x)
     {
         for (int y = static_cast<int>(negCursor.y) - cursorEffectSize; y < static_cast<int>(negCursor.y) + cursorEffectSize; ++y)

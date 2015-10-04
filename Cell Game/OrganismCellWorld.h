@@ -67,7 +67,7 @@ private:
     const float decay = 1.5f;
 
     //! Add this many cells per tick that food is feeding the blob
-    const int feed = 3;
+    const int feed = 7;
     
     //! Remove this many cells per tick that vortex is killing the blob
     const int suck = 2;
