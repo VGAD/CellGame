@@ -5,6 +5,12 @@
 namespace CellGame
 {
 
+OrganismCellWorld::OrganismCellWorld(ECSE::Engine* _engine, unsigned width, unsigned height)
+    : CellWorld<OrganismCell>(width, height), engine(_engine),
+    posCursorTex(engine->textureManager.get("Player1.png")), negCursorTex(engine->textureManager.get("Player2.png"))
+{
+}
+
 void OrganismCellWorld::init()
 {
     CellWorld<OrganismCell>::init();
@@ -105,14 +111,10 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
 {
     CellWorld<OrganismCell>::render(alpha, renderTarget);
 
-    sf::CircleShape circle(2);
-    circle.setFillColor(sf::Color(150, 50, 250));
+    sf::Sprite posCursorSpr(posCursorTex);
+    posCursorSpr.setPosition(static_cast<sf::Vector2f>(posCursor));
 
-    sf::Vector2f pos(posCursor);
-
-    circle.setPosition(pos);
-
-    renderTarget.draw(circle);
+    renderTarget.draw(posCursorSpr);
 }
 
 }
