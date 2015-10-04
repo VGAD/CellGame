@@ -31,8 +31,18 @@ public:
     //! Update chance of cells being killed on organism edges.
     virtual void updateDeathChances();
 
+    //! Assign ids to each organism.
+    virtual void indexOrganisms();
+
     //! Redistribute dead and born cells.
     virtual void redistributeCells();
+
+    //! Flood fill cells with an organism index.
+    /*!
+    * \param startCell The cell from which to start the flood fill.
+    * \param find If true, will try to use the index of an existing organism. If false, will create a new index.
+    */
+    virtual void floodFillOrganism(unsigned int startCell, bool find);
 
 private:
     //! Up to this many dead cells will be removed with no replacement each frame.
@@ -58,6 +68,12 @@ private:
     * This tries to be taken to 0 as soon as possible.
     */
     int toAdd = 0;
+
+    //! The index of the player's organism.
+    unsigned int playerOrganism;
+
+    //! The next organism index to use.
+    unsigned int nextOrgIndex = 1;
 };
 
 }

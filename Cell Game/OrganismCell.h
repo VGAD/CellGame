@@ -20,6 +20,8 @@ public:
     bool alive;             //!< Whether this cell is alive.
     bool nextAlive;         //!< Whether the cell could be alive next step.
     bool prevAlive;         //!< Whether this was alive last step.
+    bool attached;          //!< Whether this cell is attached to the player organism.
+    unsigned int organism;  //!< The organism to which this belongs.
 };
 
 }

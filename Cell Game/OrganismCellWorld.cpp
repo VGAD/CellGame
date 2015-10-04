@@ -39,6 +39,8 @@ void OrganismCellWorld::init()
     posCursor.y = static_cast<float>(center.y);
     negCursor.x = static_cast<float>(center.x);
     negCursor.y = static_cast<float>(center.y);
+
+    indexOrganisms();
 }
 
 void OrganismCellWorld::step()
@@ -118,6 +120,17 @@ void OrganismCellWorld::moveCursor()
     posCursor.y = static_cast<float>(fmod(posCursor.y + height, height));
     negCursor.x = static_cast<float>(fmod(negCursor.x + width, width));
     negCursor.y = static_cast<float>(fmod(negCursor.y + height, height));
+
+    size_t indexPosCur = indexFromPos(static_cast<int>(posCursor.x), static_cast<int>(posCursor.y));
+    if (cells[indexPosCur].organism != 0)
+    {
+        playerOrganism = cells[indexPosCur].organism;
+    }
+
+    for (auto& cell : cells)
+    {
+        cell.attached = cell.organism == playerOrganism;
+    }
 }
 
 void OrganismCellWorld::updateBirthChances()
@@ -182,18 +195,38 @@ void OrganismCellWorld::updateDeathChances()
     }
 }
 
+void OrganismCellWorld::indexOrganisms()
+{
+    for (size_t i = 0; i < cells.size(); ++i)
+    {
+        auto& cell = cells[i];
+
+        if (!cell.alive)
+        {
+            cell.organism = 0;
+        }
+        else if (cell.organism == 0)
+        {
+            floodFillOrganism(i, false);
+        }
+    }
+}
+
 void OrganismCellWorld::redistributeCells()
 {
     std::vector<size_t> born;
     std::vector<size_t> died;
+    std::vector<size_t> changed;
 
     for (size_t i = 0; i < cells.size(); ++i)
     {
-        if (cells[i].nextAlive && !cells[i].alive)
+        auto& cell = cells[i];
+
+        if (cell.nextAlive && !cell.alive)
         {
             born.push_back(i);
         }
-        else if (!cells[i].nextAlive && cells[i].alive)
+        else if (!cell.nextAlive && cell.alive)
         {
             died.push_back(i);
         }
@@ -216,6 +249,7 @@ void OrganismCellWorld::redistributeCells()
     while (toRemove > 1.f && diedIter != died.end())
     {
         cells[*diedIter].alive = false;
+        changed.push_back(*diedIter);
         ++diedIter;
 
         toRemove -= 1.f;
@@ -225,6 +259,7 @@ void OrganismCellWorld::redistributeCells()
     while (toAdd > 0 && bornIter != born.end())
     {
         cells[*bornIter].alive = true;
+        changed.push_back(*bornIter);
         ++bornIter;
 
         toAdd -= 1;
@@ -235,9 +270,99 @@ void OrganismCellWorld::redistributeCells()
     {
         cells[*bornIter].alive = true;
         cells[*diedIter].alive = false;
+        changed.push_back(*bornIter);
+        changed.push_back(*diedIter);
 
         ++bornIter;
         ++diedIter;
+    }
+
+    for (auto& index : changed)
+    {
+        cells[index].organism = 0;
+
+        for (auto neighbor : getNeighborIndices(index))
+        {
+            cells[neighbor].organism = 0;
+        }
+    }
+
+    for (auto& index : changed)
+    {
+        auto& cell = cells[index];
+
+        // Newly-created; find nearby organisms
+        if (cell.alive)
+        {
+            if (cell.organism == 0) floodFillOrganism(index, true);
+        }
+        // Newly-destroyed; neighbors may have split into new organisms
+        else
+        {
+            for (auto neighborIndex : getNeighborIndices(index))
+            {
+                auto& neighbor = cells[neighborIndex];
+
+                if (neighbor.alive && neighbor.organism == 0) floodFillOrganism(neighborIndex, false);
+            }
+        }
+    }
+}
+
+void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
+{
+    std::vector<unsigned int> open;
+    std::set<unsigned int> closed;
+    open.push_back(startCell);
+
+    unsigned int foundOrganism = 0;
+
+    while (!open.empty())
+    {
+        unsigned int index = open.back();
+        open.pop_back();
+        closed.insert(index);
+
+        auto& cell = cells[index];
+
+        if (!cell.alive) continue;
+
+        if (find)
+        {
+            // Found an organism
+            if (cell.organism != 0)
+            {
+                // Hadn't found one yet, so store it
+                if (foundOrganism == 0)
+                {
+                    foundOrganism = cell.organism;
+                }
+                // Two organisms touching; pick the lower index
+                else if (cell.organism < foundOrganism)
+                {
+                    foundOrganism = cell.organism;
+                }
+            }
+        }
+
+        for (auto neighbor : getNeighborIndices(index))
+        {
+            if (closed.find(neighbor) != closed.end()) continue;
+            open.push_back(neighbor);
+        }
+    }
+
+    // New organism if nothing else was touching (or not trying to find an organism)
+    if (foundOrganism == 0)
+    {
+        foundOrganism = nextOrgIndex;
+        ++nextOrgIndex;
+    }
+
+    // Set the organism index of everything touching
+    for (auto& index : closed)
+    {
+        cells[index].organism = foundOrganism;
     }
 }
 
