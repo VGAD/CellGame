@@ -82,5 +82,8 @@
     <ClInclude Include="FoodObject.h">
       <Filter>Source Files\Automata\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="VortexObject.h">
+      <Filter>Source Files\Automata\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
