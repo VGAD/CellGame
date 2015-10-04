@@ -21,6 +21,9 @@
     <Filter Include="Source Files\Automata\World">
       <UniqueIdentifier>{330b9a44-45f5-4850-9134-974cd87adf3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{7a7f9cd9-94c0-4166-b0b1-5ea704e01f8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="OrganismCellWorld.cpp">
       <Filter>Source Files\Automata\World</Filter>
+    </ClCompile>
+    <ClCompile Include="CellEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +69,9 @@
     </ClInclude>
     <ClInclude Include="OrganismState.h">
       <Filter>Source Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="CellEngine.h">
+      <Filter>Source Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

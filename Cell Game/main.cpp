@@ -2,6 +2,7 @@
 #include "ECSE/Common.h"
 #include "ECSE/Logging.h"
 #include "OrganismState.h"
+#include "CellEngine.h"
 
 //! Contains all CellGame-specific code.
 namespace CellGame {}
@@ -33,7 +34,15 @@ int main(int argv, char* argc[])
     try
     {
         // Run the game
-        ECSE::Engine engine(sf::Vector2i(400, 300), 2.f, "Cell Game");
+        CellEngine engine(sf::Vector2i(400, 300), 2.f, "Cell Game");
+
+        // Set up input for posCursor
+        engine.inputManager.bindInput(0, 0, sf::Keyboard::A, sf::Keyboard::D);
+        engine.inputManager.bindInput(1, 0, sf::Keyboard::W, sf::Keyboard::S);
+
+        // Set up input for negCursor
+        engine.inputManager.bindInput(2, 0, sf::Keyboard::Left, sf::Keyboard::Right);
+        engine.inputManager.bindInput(3, 0, sf::Keyboard::Up, sf::Keyboard::Down);
 
         engine.pushState<OrganismState>();
 

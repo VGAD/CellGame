@@ -79,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CellEngine.cpp" />
     <ClCompile Include="ConwayCell.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ConwayTestState.cpp" />
@@ -88,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutomataCell.h" />
+    <ClInclude Include="CellEngine.h" />
     <ClInclude Include="CellWorld.h" />
     <ClInclude Include="ConwayCell.h" />
     <ClInclude Include="ConwayTestState.h" />
