@@ -16,9 +16,15 @@ void OrganismCellWorld::init()
 {
     CellWorld<OrganismCell>::init();
 
-    // Set up input
+    // Set up input for posCursor
     engine->inputManager.bindInput(0, 0, sf::Keyboard::A, sf::Keyboard::D);
     engine->inputManager.bindInput(1, 0, sf::Keyboard::W, sf::Keyboard::S);
+    
+    // Set up input for negCursor
+    engine->inputManager.bindInput(2, 0, 
+        sf::Keyboard::Left, sf::Keyboard::Right);
+    engine->inputManager.bindInput(3, 0, 
+        sf::Keyboard::Up, sf::Keyboard::Down);
 
     sf::Vector2i center
     {
@@ -103,28 +109,42 @@ void OrganismCellWorld::step()
     }
 
     // Get input
-    float dx = engine->inputManager.getFloatValue(0),
-        dy = engine->inputManager.getFloatValue(1);
+    float dxPos = engine->inputManager.getFloatValue(0),
+        dyPos = engine->inputManager.getFloatValue(1),
+        dxNeg = engine->inputManager.getFloatValue(2),
+        dyNeg = engine->inputManager.getFloatValue(3);
 
     // 5 = width and height of cursor sprite
-    int index = indexFromPos(
-        static_cast<int>(posCursor.x + dx * 5.f),
-        static_cast<int>(posCursor.y + dy * 5.f));
+    int indexPos = indexFromPos(static_cast<int>(posCursor.x + dxPos * 5.f), static_cast<int>(posCursor.y + dyPos * 5.f)),
+        indexNeg = indexFromPos(static_cast<int>(negCursor.x + dxPos * 5.f), static_cast<int>(negCursor.y + dyPos * 5.f));
 
-    auto movement = sf::Vector2f(dx, dy);
-    ECSE::normalize(movement);
+    auto movementPos = sf::Vector2f(dxPos, dyPos),
+        movementNeg = sf::Vector2f(dxNeg, dyNeg);
+    ECSE::normalize(movementPos);
+    ECSE::normalize(movementNeg);
 
     // Move at full speed inside the cell
-    if (cells[index].alive) {
-        posCursor += movement * 2.f;
+    if (cells[indexPos].alive) {
+        posCursor += movementPos * 2.f;
     }
     // Slower outside of the cell
     else {
-        posCursor += movement * 0.5f;
+        posCursor += movementPos * 0.5f;
+    }
+
+    // Move at full speed inside the cell
+    if (cells[indexNeg].alive) {
+        negCursor += movementNeg * 2.f;
+    }
+    // Slower outside of the cell
+    else {
+        negCursor += movementNeg * 0.5f;
     }
 
     posCursor.x = static_cast<float>(fmod(posCursor.x + width, width));
     posCursor.y = static_cast<float>(fmod(posCursor.y + height, height));
+    negCursor.x = static_cast<float>(fmod(negCursor.x + width, width));
+    negCursor.y = static_cast<float>(fmod(negCursor.y + height, height));
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
@@ -132,14 +152,20 @@ void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
     CellWorld<OrganismCell>::render(alpha, renderTarget);
 
     sf::Sprite posCursorSpr(posCursorTex);
-    
+    sf::Sprite negCursorSpr(negCursorTex);
+
     posCursorSpr.setOrigin(3.f, 3.f);
+    negCursorSpr.setOrigin(3.f, 3.f);
     
     posCursorSpr.setPosition(
         floor(posCursor.x),
         floor(posCursor.y));
+    negCursorSpr.setPosition(
+        floor(negCursor.x),
+        floor(negCursor.y));
 
     renderTarget.draw(posCursorSpr);
+    renderTarget.draw(negCursorSpr);
 }
 
 }
