@@ -6,6 +6,16 @@
 #include "FoodObject.h"
 #include "VortexObject.h"
 
+#define DIE_CHANCE_DEF  60
+#define DIE_NEIGH_DEF   6
+#define ALIVE_NEIGH_DEF 2
+
+// These are duplicated in OrganismCell.h to avoid circular include
+#define DIE_CHANCE_IND  0
+#define DIE_NEIGH_IND   1
+#define ALIVE_NEIGH_IND 2
+
+
 namespace CellGame
 {
 
@@ -94,6 +104,9 @@ private:
 
     //! Vector of currect vortex locations
     std::vector<VortexObject> vortices;
+    
+    //! Vector of cell modifiers
+    std::vector<int> modifiers;
 };
 
 }

@@ -18,6 +18,16 @@ void OrganismCellWorld::init()
 {
     CellWorld<OrganismCell>::init();
 
+    // Set defaults for modifiers
+    modifiers.push_back(DIE_CHANCE_DEF);
+    modifiers.push_back(DIE_NEIGH_DEF);
+    modifiers.push_back(ALIVE_NEIGH_DEF);
+
+    // Give reference to modifiers
+    for (auto& cell : cells) {
+        cell.mods = &modifiers;
+    }
+
     sf::Vector2i center
     {
         static_cast<int>(width / 2),
