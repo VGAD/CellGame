@@ -92,6 +92,13 @@ public:
     }
 
 protected:
+    //! Get the neighbor indices to a cell index.
+    /*!
+    * \param index The cell index.
+    * \return An array of neighbor cell indices (or -1 for invalid neighbors).
+    */
+    std::array<unsigned, AutomataCell::DIRECTION_COUNT> getNeighborIndices(unsigned index);
+
     //! Get the neighbors to a cell index.
     /*!
     * \param index The cell index.
@@ -189,9 +196,9 @@ void CellWorld<CellType>::render(float alpha, sf::RenderTarget& renderTarget)
 }
 
 template <typename CellType>
-NeighborArray CellWorld<CellType>::getNeighbors(unsigned index)
+std::array<unsigned, AutomataCell::DIRECTION_COUNT> CellWorld<CellType>::getNeighborIndices(unsigned index)
 {
-    NeighborArray result;
+    std::array<unsigned, AutomataCell::DIRECTION_COUNT> result;
 
     auto pos = sf::Vector2i(index % width, index / width);
 
@@ -200,7 +207,22 @@ NeighborArray CellWorld<CellType>::getNeighbors(unsigned index)
         auto neighborPos = pos;
         neighborPos += offsets[i];
 
-        unsigned neighborIndex = indexFromPos(neighborPos.x, neighborPos.y);
+        result[i] = indexFromPos(neighborPos.x, neighborPos.y);
+    }
+
+    return result;
+}
+
+template <typename CellType>
+NeighborArray CellWorld<CellType>::getNeighbors(unsigned index)
+{
+    NeighborArray result;
+
+    auto indices = getNeighborIndices(index);
+
+    for (unsigned i = 0; i < offsets.size(); ++i)
+    {
+        unsigned neighborIndex = indices[i];
 
         if (neighborIndex == -1)
         {
