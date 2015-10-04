@@ -28,6 +28,9 @@ public:
     //! Update chance of cells being born on organism edges.
     virtual void updateBirthChances();
 
+    //! Update chance of cells being killed on organism edges.
+    virtual void updateDeathChances();
+
     //! Redistribute dead and born cells.
     virtual void redistributeCells();
 

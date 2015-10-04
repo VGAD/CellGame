@@ -54,6 +54,7 @@ void OrganismCellWorld::init()
 void OrganismCellWorld::step()
 {
     updateBirthChances();
+    updateDeathChances();
 
     CellWorld<OrganismCell>::step();
 
@@ -145,6 +146,33 @@ void OrganismCellWorld::updateBirthChances()
             
             if (dist == 0.f) cells[index].birthChance = 1.f;
             else cells[index].birthChance = ECSE::clamp(0.f, 1.f, 40.f / (dist * dist));
+        }
+    }
+}
+
+void OrganismCellWorld::updateDeathChances()
+{
+    for (auto& cell : cells)
+    {
+        cell.deathChance = 0.f;
+    }
+
+    const int cursorEffectSize = 30;
+
+    // Increase likelihood of cells being born near cursor
+    for (int x = static_cast<int>(negCursor.x) - cursorEffectSize; x < static_cast<int>(negCursor.x) + cursorEffectSize; ++x)
+    {
+        for (int y = static_cast<int>(negCursor.y) - cursorEffectSize; y < static_cast<int>(negCursor.y) + cursorEffectSize; ++y)
+        {
+            size_t index = indexFromPos(x, y);
+            float dx1 = ECSE::wrapDifference(negCursor.x, static_cast<float>(x), static_cast<float>(width)),
+                dy1 = ECSE::wrapDifference(negCursor.y, static_cast<float>(y), static_cast<float>(height));
+            float dist = sqrt(dx1 * dx1 + dy1 * dy1);
+
+            if (dist == 0.f) cells[index].deathChance = .35f;
+            else  {
+                cells[index].deathChance = ECSE::clamp(0.f, .35f, 100.f / (dist * dist));
+            }
         }
     }
 }
