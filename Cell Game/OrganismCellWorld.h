@@ -52,6 +52,12 @@ private:
     * This accumulates, and when it reaches at least 1, a cell is removed.
     */
     float toRemove = 0.f;
+    
+    //! The number of cells to add as soon as possible.
+    /*!
+    * This tries to be taken to 0 as soon as possible.
+    */
+    int toAdd = 0;
 };
 
 }

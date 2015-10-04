@@ -26,6 +26,11 @@ void OrganismCellWorld::init()
     engine->inputManager.bindInput(3, 0, 
         sf::Keyboard::Up, sf::Keyboard::Down);
 
+    // Set up test input
+    engine->inputManager.bindInput(4, 0, sf::Keyboard::SemiColon, sf::Keyboard::P); // Shrink/Grow
+    engine->inputManager.bindInput(5, 0, sf::Keyboard::BackSlash); // Food
+
+
     sf::Vector2i center
     {
         static_cast<int>(width / 2),
@@ -60,6 +65,11 @@ void OrganismCellWorld::step()
 
     redistributeCells();
     moveCursor();
+
+    if (engine->inputManager.getIntValue(5)) {
+
+
+    }
 }
 
 void OrganismCellWorld::render(float alpha, sf::RenderTarget& renderTarget)
@@ -211,6 +221,9 @@ void OrganismCellWorld::redistributeCells()
     auto bornIter = born.begin();
     auto diedIter = died.begin();
 
+    if (engine->inputManager.getIntValue(4) > 0) toAdd += 100;
+    else if (engine->inputManager.getIntValue(4) < 0) toRemove += 100;
+
     // Accumulate number of dead cells
     toRemove += decay;
 
@@ -222,13 +235,14 @@ void OrganismCellWorld::redistributeCells()
 
         toRemove -= 1.f;
     }
-    
-    // If there's leftover decay, stop some cells from being born
-    while (toRemove > 1.f && bornIter != born.end())
+
+    // If we have cells to add then do so
+    while (toAdd > 0 && bornIter != born.end())
     {
+        cells[*bornIter].alive = true;
         ++bornIter;
 
-        toRemove -= 1.f;
+        toAdd -= 1;
     }
 
     // Redistribute dead cells into born cells
