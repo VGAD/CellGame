@@ -108,13 +108,13 @@ void OrganismCellWorld::moveCursor()
         posCursor += movementPos * 0.5f;
     }
 
-    // Move at full speed inside the cell
+    // Move slower inside the cell
     if (cells[indexNeg].alive) {
-        negCursor += movementNeg * 2.f;
-    }
-    // Slower outside of the cell
-    else {
         negCursor += movementNeg * 0.5f;
+    }
+    // Faster outside of the cell
+    else {
+        negCursor += movementNeg * 2.f;
     }
 
     // Mod to wrap
