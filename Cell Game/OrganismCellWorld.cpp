@@ -33,7 +33,7 @@ void OrganismCellWorld::init()
             int dx = x - center.x;
             int dy = y - center.y;
 
-            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.1;
+            cell->alive = sqrt(dx * dx + dy * dy) < width * 0.3;
         }
     }
 
@@ -370,6 +370,8 @@ void OrganismCellWorld::redistributeCells()
         ++diedIter;
     }
 
+    std::random_shuffle(changed.begin(), changed.end());
+
     for (auto& index : changed)
     {
         cells[index].organism = 0;
@@ -380,8 +382,9 @@ void OrganismCellWorld::redistributeCells()
         }
     }
 
-    for (auto& index : changed)
+    for (auto it = changed.begin(); it != changed.end(); ++it)
     {
+        auto index = *it;
         auto& cell = cells[index];
 
         // Newly-created; find nearby organisms
@@ -404,6 +407,9 @@ void OrganismCellWorld::redistributeCells()
 
 void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
 {
+    static unsigned int floodId = 0;
+    ++floodId;
+
     std::vector<unsigned int> open;
     std::set<unsigned int> closed;
     open.push_back(startCell);
@@ -417,6 +423,7 @@ void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
         closed.insert(index);
 
         auto& cell = cells[index];
+        cell.lastFlood = floodId;
 
         if (!cell.alive) continue;
 
@@ -440,7 +447,7 @@ void OrganismCellWorld::floodFillOrganism(unsigned int startCell, bool find)
 
         for (auto neighbor : getNeighborIndices(index))
         {
-            if (closed.find(neighbor) != closed.end()) continue;
+            if (cells[neighbor].lastFlood == floodId) continue;
             open.push_back(neighbor);
         }
     }

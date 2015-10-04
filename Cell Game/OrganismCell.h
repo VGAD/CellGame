@@ -22,6 +22,7 @@ public:
     bool prevAlive;         //!< Whether this was alive last step.
     bool attached;          //!< Whether this cell is attached to the player organism.
     unsigned int organism;  //!< The organism to which this belongs.
+    unsigned int lastFlood; //!< Use by flood fill algorithm to determine whether this has been visited.
 };
 
 }
