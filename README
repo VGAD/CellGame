@@ -1,4 +1,65 @@
-An entry for the 2015 October 2-4 VGAD "Shut Up and Make a Game" Game Jam.
+ _______  _______  _        _______  _______  _______    _       _________ _        _        _______  _______    _______  _______  __    _______ 
+(  ____ \(  ___  )( (    /|(  ____ \(  ____ \(  ____ )  | \    /\\__   __/( \      ( \      (  ____ \(  ____ )  / ___   )(  __   )/  \  (  ____ \
+| (    \/| (   ) ||  \  ( || (    \/| (    \/| (    )|  |  \  / /   ) (   | (      | (      | (    \/| (    )|  \/   )  || (  )  |\/) ) | (    \/
+| |      | (___) ||   \ | || |      | (__    | (____)|  |  (_/ /    | |   | |      | |      | (__    | (____)|      /   )| | /   |  | | | (____  
+| |      |  ___  || (\ \) || |      |  __)   |     __)  |   _ (     | |   | |      | |      |  __)   |     __)    _/   / | (/ /) |  | | (_____ \ 
+| |      | (   ) || | \   || |      | (      | (\ (     |  ( \ \    | |   | |      | |      | (      | (\ (      /   _/  |   / | |  | |       ) )
+| (____/\| )   ( || )  \  || (____/\| (____/\| ) \ \__  |  /  \ \___) (___| (____/\| (____/\| (____/\| ) \ \__  (   (__/\|  (__) |__) (_/\____) )
+(_______/|/     \||/    )_)(_______/(_______/|/   \__/  |_/    \/\_______/(_______/(_______/(_______/|/   \__/  \_______/(_______)\____/\______/ 
+                                                                                                                                                 
+                                                          -- by Team Fruity Rumpus Asshole Factory --
 
+An entry for the 2015 October 2-4 VGAD "Shut Up and Make a Game" Game Jam.
+                                                          
+TEAM MEMBERS
+------------
+Braedy "Installing Boost" Kuzma (braedy@ualberta.ca)
+Elliot "Getting Hair Cut" Colp (colp@ualberta.ca)
+
+
+HOW TO PLAY
+-----------
+Run CANCERKILLER.exe.
+
+Both players control a growing cancerous tumour. The players are represented by a white cursor (Cancer) and a black cursor (Anti-Cancer).
+
+The Cancer player's goal is to take over the body by guiding the tumour to eat 30 pieces of food (green blocks). Their cursor attracts cancer
+cells, causing the tumour to mutate toward it. They use the W/A/S/D keys to move their cursor.
+
+The Anti-Cancer player's goal is to make all the cells in the tumor die off. Their cursor repels cancer cells, causing the tumour to mutate away from the
+black ball. They use the arrow keys to move their cursor.
+
+Normally, cancer cells are red. While red, cancer cells will very slowly deplete, causing the tumour to shrink. When red cancer cells come in 
+contact with food, they will multiply and produce more cells around the food.
+
+If a group of cancer cells gets cut off from the Cancer player's blob, they will become black. While black, cells die off very quickly and are
+not able to absorb food. If the group is reattached, they will become red again.
+
+If 30 pieces of food are eaten, the Cancer player wins. If the number of red cancer cells drops too low (specifically, below 200, not that you can tell),
+the Anti-Cancer player wins.
+
+Press R to restart the game.
+
+
+DEBUG
+-----
+If you want to play around with the game's debug settings, use these keys:
+[ - change cell consistency (changes rules for cell reproduction)
+] - spawn a vortex (not used in game normally)
+\ - spawn food
+p - grow the player's blob
+; - shrink the player's blob
+
+
+SOURCE CODE
+-----------
+Source code can be found at:
+https://github.com/VGAD/CellGame
+
+
+BUILDING
+--------
 Go to Project Properties -> Configuration Properties -> Debugging and set Working Directory to $(SolutionDir)/Run.
 Set the environment variable ECSE_DIR to your ECSE install.
+Note that ECSE, Boost and SFML must be compiled with the preprocessor definition _ITERATOR_DEBUG_LEVEL=0 in order to
+build in Debug mode. Release should build without it, however.
